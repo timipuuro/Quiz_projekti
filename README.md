@@ -6,7 +6,7 @@ Laatija(t): Kasper, Lenni, Mico
 1.	Yhteenveto ja Esittely
 
 1.1.	Projektin kuvaus
-käyttäjäystävällinen kysymyspeli, jossa opettajat voivat hallinnoida kysymyksiä ja opiskelijat testata osaamistaan eri aihealueilla. Sovelluksen tulee sisältää kaksi päätoiminnallisuutta: pelinäkymä opiskelijoille ja hallintapaneeli opettajille.
+käyttäjäystävällinen kysymyspeli, jossa opettajat voivat hallinnoida kysymyksiä ja opiskelijat testata osaamistaan eri aihealueilla. Sovelluksen tulee sisältää kaksi päätoiminnallisuutta: pelinäkymä opiskelijoille ja hallintapaneeli opettajille. opettajat voivat luoda ja postaa omia kysymyspaketteja. oppilaat voivat hakea ja suorittaa paketteja.
 1.2. Projektin tavoitteet
 Projekti on toimiva 25.11 mennessä.
 1.3. Sidosryhmät
