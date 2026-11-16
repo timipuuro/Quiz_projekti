@@ -1,2 +1,81 @@
-# Quiz_projekti
-Käyttäjäystävällinen kysymyspeli, jossa opettajat voivat hallinnoida kysymyksiä ja opiskelijat testata osaamistaan eri aihealueilla. Sovelluksen tulee sisältää kaksi päätoiminnallisuutta: pelinäkymä opiskelijoille ja hallintapaneeli opettajille.
+OHJELMISTOPROJEKTIN SUUNNITELMA
+Projektin nimi:  quiz
+Päivämäärä: 16.11.2026
+Versionumero: 0.0.0
+Laatija(t): Kasper, Lenni, Mico
+1.	Yhteenveto ja Esittely
+
+1.1.	Projektin kuvaus
+käyttäjäystävällinen kysymyspeli, jossa opettajat voivat hallinnoida kysymyksiä ja opiskelijat testata osaamistaan eri aihealueilla. Sovelluksen tulee sisältää kaksi päätoiminnallisuutta: pelinäkymä opiskelijoille ja hallintapaneeli opettajille.
+1.2. Projektin tavoitteet
+Projekti on toimiva 25.11 mennessä.
+1.3. Sidosryhmät
+•	Koulu, opettaja ja tiimi
+
+1.4.Vaatimukset.
+•	Sivusto toimii virheetömästi.
+•	Projekti kuvaus on täytetty.
+
+
+
+
+ 
+ Tiimin työnjako
+Tehtävä	              Kasper	Lenni	Mico
+Sprintin suunnittelu	    R      	C  	C
+Tietokannan suunnittelu	  R      	c  	I
+API-toteutus	            I	      I   R
+UI-suunnittelu	          I	      R	  I
+Testaus                  	C      	R	  C
+Dokumentointi	            R	      I	  I
+Demo ja retrospektiivi	  i	      C	  R
+R = Responsible, A = Accountable, C = Consulted, I = Informed
+
+
+2.Projektin aikataulut ja vaiheet.
+2.1 Projektin vaiheet
+1. Suunnittelu 2. Tietokanta, API ja frontin alku. 3. UI-suunitelu ja testaus. 4. käyttöön otto.
+2.2 Tärkeimmät välitavoitteet
+Selkeä ja toimiva tietokanta(18.11 ).
+ Toimiva API(19.11).
+ Tyydyttävä UI ja etusivu(20.11).
+ Testaus (23.11).
+
+ 2.3 Yksityiskohtainen aikataulu.
+Tehtävä	                    v iikko 1.		viikko 2.	  viikko 3.
+Sprintin suunnittelu	         valmis		    -	-
+Tietokannan suunnittelu	       aloitus k		valmis	-
+API-toteutus	                aloitus Mico		 jatko	valmis
+UI-suunnittelu	             aloitus Lenni		 jatko	valmis
+Testaus	Lenni		              aloitus	v    almis
+
+
+
+
+
+	
+
+
+3.Riskien hallinta.
+
+3.1.Riskianalyysi
+•	Projekti ei pysy aikataulussa.
+•	käyttäjä voi asettaa haitalista koodia kysymyksiin.
+
+3.2 Varasuunnitelma
+Tarvittaessa roolit voi muuttua ja aikatauluja voidaan vaihtaa.
+
+4. Viestintä suunnitelma.
+4.1 Viestintä kanava.
+Teams ja trello
+4.2 Kokoukset.
+Viikoittaiset edistymis- kokoukset ja Dailyt
+
+4.3 Raportointi.
+edistyminen raportoidaan Readme: hin ja kommentteihin. Dayilit kirjataan ylös.
+
+
+
+
+
+
