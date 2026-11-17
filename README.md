@@ -1,8 +1,9 @@
 OHJELMISTOPROJEKTIN SUUNNITELMA
 Projektin nimi:  quiz
 Päivämäärä: 16.11.2026
-Versionumero: 0.0.0
+Versionumero: 0.1.1
 Laatija(t): Kasper, Lenni, Mico
+(lue editissä)
 1.	Yhteenveto ja Esittely
 
 1.1.	Projektin kuvaus
@@ -47,7 +48,7 @@ Sprintin suunnittelu	         valmis		    -	-
 Tietokannan suunnittelu	       aloitus k		valmis	-
 API-toteutus	                aloitus Mico		 jatko	valmis
 UI-suunnittelu	             aloitus Lenni		 jatko	valmis
-Testaus	Lenni		              aloitus	v    almis
+Testaus	Lenni		                          aloitus		valmis
 
 
 
@@ -70,6 +71,10 @@ Tarvittaessa roolit voi muuttua ja aikatauluja voidaan vaihtaa.
 Teams ja trello
 4.2 Kokoukset.
 Viikoittaiset edistymis- kokoukset ja Dailyt
+
+ER
+•	 Pakollinen yksi–moni -suhteet, esimerkiksi kysymyspaketti --> kysymys.
+•	Valinnainen yksi–moni -suhteet kahdessa kohdassa: aihealue --> kysymyspaketti ja vastausvaihtoehto  pelivastaus. Nämä vastaavat SQL:n valinnaisia viiteavaimia (aihealue_id, valittu_id).
 
 4.3 Raportointi.
 edistyminen raportoidaan Readme: hin ja kommentteihin. Dayilit kirjataan ylös.
