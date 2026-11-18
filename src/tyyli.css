@@ -1,6 +1,6 @@
 :root {
     color-scheme: dark;
-    --background:#1d1c1d;
+    --background:#20232e;
     --surface: #2d2231;
     --surface-raised: #31143d;
     --text: #f4f2ee;
@@ -435,6 +435,12 @@ h3 {
     color: var(--muted);
     font-size: 12px;
     line-height: 1.6;
+}
+
+.topic-card p + p {
+    margin-top: 8px;
+    color: var(--accent);
+    font-weight: 700;
 }
 
 .topic-arrow {

@@ -5,6 +5,35 @@ require_once "tietokanta.php";
 session_start();
 
 
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['action'] ?? '') === 'paketit') {
+    header('Content-Type: application/json; charset=utf-8');
+
+    try {
+        $stmt = $conn->prepare(
+            'SELECT kp.id, kp.nimi, kp.kuvaus, a.nimi AS aihealue,
+                    COUNT(DISTINCT k.id) AS kysymys_maara
+             FROM kysymyspaketti kp
+             LEFT JOIN aihealue a ON a.id = kp.aihealue_id
+             LEFT JOIN kysymys k ON k.paketti_id = kp.id
+             WHERE kp.julkaistu = 1
+             GROUP BY kp.id, kp.nimi, kp.kuvaus, a.nimi
+             ORDER BY kp.nimi'
+        );
+        $stmt->execute();
+
+        echo json_encode(
+            ['packages' => $stmt->fetchAll()],
+            JSON_UNESCAPED_UNICODE
+        );
+    } catch (Throwable $e) {
+        http_response_code(500);
+        error_log($e->getMessage());
+        echo json_encode(['virhe' => 'Kysymyspaketteja ei voitu hakea.'], JSON_UNESCAPED_UNICODE);
+    }
+
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['action'] ?? '') === 'kysymykset') {
     header('Content-Type: application/json; charset=utf-8');
 
