@@ -5,6 +5,78 @@ require_once "tietokanta.php";
 session_start();
 
 
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['action'] ?? '') === 'kysymykset') {
+    header('Content-Type: application/json; charset=utf-8');
+
+    $pakettiId = isset($_GET['paketti_id']) ? (int)$_GET['paketti_id'] : null;
+
+    try {
+        $sql = '
+            SELECT k.id, k.teksti, k.paketti_id
+            FROM kysymys k
+            INNER JOIN kysymyspaketti kp ON kp.id = k.paketti_id
+            WHERE kp.julkaistu = 1
+        ';
+        $params = [];
+
+        if ($pakettiId !== null && $pakettiId > 0) {
+            $sql .= ' AND k.paketti_id = :paketti_id';
+            $params['paketti_id'] = $pakettiId;
+        }
+
+        $sql .= ' ORDER BY k.jarjestys, k.id';
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
+        $kysymykset = $stmt->fetchAll();
+
+        $vastausStmt = $conn->prepare(
+            'SELECT teksti, on_oikea
+             FROM vastausvaihtoehto
+             WHERE kysymys_id = ?
+             ORDER BY id'
+        );
+
+        $tulos = [];
+        foreach ($kysymykset as $kysymys) {
+            $vastausStmt->execute([$kysymys['id']]);
+            $vaihtoehdot = $vastausStmt->fetchAll();
+
+            if (count($vaihtoehdot) !== 4) {
+                continue;
+            }
+
+            $oikeaIndex = null;
+            foreach ($vaihtoehdot as $index => $vaihtoehto) {
+                if ((int)$vaihtoehto['on_oikea'] === 1) {
+                    $oikeaIndex = $index;
+                    break;
+                }
+            }
+            if ($oikeaIndex === null) {
+                continue;
+            }
+
+            $tulos[] = [
+                'id' => (int)$kysymys['id'],
+                'paketti_id' => (int)$kysymys['paketti_id'],
+                'question' => $kysymys['teksti'],
+                'options' => array_column($vaihtoehdot, 'teksti'),
+                'correctOption' => 'option' . ['A', 'B', 'C', 'D'][$oikeaIndex]
+            ];
+        }
+
+        echo json_encode(['questions' => $tulos], JSON_UNESCAPED_UNICODE);
+    } catch (Throwable $e) {
+        http_response_code(500);
+        error_log($e->getMessage());
+        echo json_encode(['virhe' => 'Kysymyksia ei voitu hakea.'], JSON_UNESCAPED_UNICODE);
+    }
+
+    exit;
+}
+
+
 // Haetaan kirjautunut käyttäjä tietokannasta kirjautumista varten. Jos käyttäjää ei löydy, sessio tuhotaan. tee loppuun.
 function haeKirjautunutKayttaja(PDO $conn): ?array
 {

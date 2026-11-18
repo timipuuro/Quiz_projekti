@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="fi">
-<head>
-  
-    <meta charset="UTF-8">
+ <?php
+require_once "tietokanta.php";
+
+?>
  
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    ><!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="fi">
 <head>
   
@@ -18,19 +14,8 @@
         content="width=device-width, initial-scale=1.0"
     >
     <link rel="stylesheet" href="quiz.css">
-    </head>
+</head>
 <body>
-
-
-
-
-
-
-
-
-
-
-<body onload="NextQuestion(0)">
     <main>
         <!-- creating a modal for when quiz ends -->
         <div class="modal-container" id="score-modal">
@@ -58,8 +43,8 @@
         <div class="game-quiz-container">
 
             <div class="game-details-container">
-                <h1>Score : <span id="player-score"></span> / 3</h1>
-                <h1> Question : <span id="question-number"></span> / 3</h1>
+                <h1>Score : <span id="player-score"></span> / <span id="question-total"></span></h1>
+                <h1>Question : <span id="question-number"></span> / <span id="question-total-top"></span></h1>
             </div>
 
             <div class="game-question-container">
@@ -114,7 +99,7 @@
         </div>
     </main>
     
-    <script src="matematiikka.js"></script>
+    <script src="quiz.js"></script>
     
 </body>
 </body>
