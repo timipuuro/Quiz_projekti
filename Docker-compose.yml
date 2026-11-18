@@ -21,7 +21,7 @@ services:
       - "3307:3306"
     volumes:
       - dbdata:/var/lib/mysql
-      - ./src/Luokka_Tietokanta.sql:/docker-entrypoint-initdb.d/01-Luokka_Tietokanta.sql:ro
+      - ./Luokka_Tietokanta.sql:/docker-entrypoint-initdb.d/01-Luokka_Tietokanta.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -proot --silent"]
       interval: 5s

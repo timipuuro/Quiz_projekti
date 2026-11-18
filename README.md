@@ -1,7 +1,7 @@
 OHJELMISTOPROJEKTIN SUUNNITELMA
 Projektin nimi:  quiz
 Päivämäärä: 16.11.2026
-Versionumero: 0.1.1
+Versionumero: 0.1.3
 Laatija(t): Kasper, Lenni, Mico
 (lue editissä)
 1.	Yhteenveto ja Esittely
@@ -72,15 +72,19 @@ Teams ja trello
 4.2 Kokoukset.
 Viikoittaiset edistymis- kokoukset ja Dailyt
 
-ER
-•	 Pakollinen yksi–moni -suhteet, esimerkiksi kysymyspaketti --> kysymys.
-•	Valinnainen yksi–moni -suhteet kahdessa kohdassa: aihealue --> kysymyspaketti ja vastausvaihtoehto  pelivastaus. Nämä vastaavat SQL:n valinnaisia viiteavaimia (aihealue_id, valittu_id).
+
 
 4.3 Raportointi.
 edistyminen raportoidaan Readme: hin ja kommentteihin. Dayilit kirjataan ylös.
 
 
+-----------------------ER----------------------
+•	 Pakollinen yksi–moni -suhteet, esimerkiksi kysymyspaketti --> kysymys.
+•	Valinnainen yksi–moni -suhteet kahdessa kohdassa: aihealue --> kysymyspaketti ja vastausvaihtoehto  pelivastaus. Nämä vastaavat SQL:n valinnaisia viiteavaimia (aihealue_id, valittu_id).
 
-
+-----------------~Edistyminen~--------------------------------
+16.11.26 projekti alkoi.
+17.11.26 klo: 8.58 Tietokanta saatiin valmiiksi
+17.11.26 klo: 12.40 Api yhteys ja hash on tehty.
 
 
