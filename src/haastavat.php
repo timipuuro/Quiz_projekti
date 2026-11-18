@@ -40,7 +40,7 @@
                 <h1>Congratulations, Quiz Completed.</h1>
 
                 <div class="grade-details">
-                    <p>Attempts : 10</p>
+                    <p>Attempts : 3</p>
                     <p>Wrong Answers : <span id="wrong-answers"></span></p>
                     <p>Right Answers : <span id="right-answers"></span></p>
                     <p>Grade : <span id="grade-percentage"></span>%</p>
@@ -58,8 +58,8 @@
         <div class="game-quiz-container">
 
             <div class="game-details-container">
-                <h1>Score : <span id="player-score"></span> / 10</h1>
-                <h1> Question : <span id="question-number"></span> / 10</h1>
+                <h1>Score : <span id="player-score"></span> / 3</h1>
+                <h1> Question : <span id="question-number"></span> / 3</h1>
             </div>
 
             <div class="game-question-container">
