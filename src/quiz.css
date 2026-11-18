@@ -24,7 +24,7 @@ main{
     align-items: center;
     background-color: rgb(24, 79, 124);
     background: url('../assets/background_image.jpg');
-    background-color : rgb(133, 38, 170);
+    background-color : #1d1c1d;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
