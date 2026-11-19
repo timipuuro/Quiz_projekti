@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="fi">
 <head>
@@ -32,6 +35,9 @@
             </div>
         </section>
 
+        <?php if (strtolower((string)($_SESSION['rooli'] ?? '')) === 'opettaja'): ?>
+            <?php include "ohjauspaneeli.php"; ?>
+        <?php endif; ?>
         <section class="topics section-wrap" id="tietovisat" aria-labelledby="topics-title">
             <div class="section-heading">
                 <div>

@@ -4,6 +4,120 @@ require_once "tietokanta.php";
 
 session_start();
 
+$teacherActions = ['omat_paketit', 'luo_paketti', 'poista_paketti'];
+$action = $_GET['action'] ?? '';
+
+if (in_array($action, $teacherActions, true)) {
+    header('Content-Type: application/json; charset=utf-8');
+
+    try {
+        $opettajaId = haeOpettajaId($conn);
+        if ($opettajaId === null) {
+            http_response_code(403);
+            echo json_encode(['virhe' => 'Vain opettaja voi hallita kysymyspaketteja.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === 'omat_paketit') {
+            if (!isset($_SESSION['csrf_token'])) {
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            }
+
+            $stmt = $conn->prepare(
+                'SELECT kp.id, kp.nimi, kp.kuvaus, kp.julkaistu, a.nimi AS aihealue,
+                        COUNT(DISTINCT k.id) AS kysymys_maara
+                 FROM kysymyspaketti kp
+                 LEFT JOIN aihealue a ON a.id = kp.aihealue_id
+                 LEFT JOIN kysymys k ON k.paketti_id = kp.id
+                 WHERE kp.opettaja_id = ?
+                 GROUP BY kp.id, kp.nimi, kp.kuvaus, kp.julkaistu, a.nimi
+                 ORDER BY kp.luotu DESC, kp.id DESC'
+            );
+            $stmt->execute([$opettajaId]);
+
+            $aihealueet = $conn->query('SELECT id, nimi FROM aihealue ORDER BY nimi')->fetchAll();
+            echo json_encode([
+                'packages' => $stmt->fetchAll(),
+                'aihealueet' => $aihealueet,
+                'csrf_token' => $_SESSION['csrf_token']
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            header('Allow: GET, POST');
+            echo json_encode(['virhe' => 'Virheellinen HTTP-metodi.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $csrfToken = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $csrfToken)) {
+            http_response_code(403);
+            echo json_encode(['virhe' => 'Pyyntöä ei voitu vahvistaa. Lataa sivu uudelleen.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        if ($action === 'luo_paketti') {
+            $nimi = trim((string)($_POST['nimi'] ?? ''));
+            $kuvaus = trim((string)($_POST['kuvaus'] ?? ''));
+            $aihealueId = (int)($_POST['aihealue_id'] ?? 0);
+            $julkaistu = isset($_POST['julkaistu']) ? 1 : 0;
+
+            if ($nimi === '' || preg_match('/\A.{1,150}\z/us', $nimi) !== 1) {
+                http_response_code(400);
+                echo json_encode(['virhe' => 'Anna paketin nimi (enintään 150 merkkiä).'], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+
+            if ($aihealueId > 0) {
+                $topicStmt = $conn->prepare('SELECT id FROM aihealue WHERE id = ?');
+                $topicStmt->execute([$aihealueId]);
+                if (!$topicStmt->fetch()) {
+                    http_response_code(400);
+                    echo json_encode(['virhe' => 'Valittua aihealuetta ei löydy.'], JSON_UNESCAPED_UNICODE);
+                    exit;
+                }
+            } else {
+                $aihealueId = null;
+            }
+
+            $stmt = $conn->prepare(
+                'INSERT INTO kysymyspaketti (opettaja_id, aihealue_id, nimi, kuvaus, julkaistu)
+                 VALUES (?, ?, ?, ?, ?)'
+            );
+            $stmt->execute([$opettajaId, $aihealueId, $nimi, $kuvaus !== '' ? $kuvaus : null, $julkaistu]);
+
+            http_response_code(201);
+            echo json_encode(['id' => (int)$conn->lastInsertId()], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $pakettiId = (int)($_POST['paketti_id'] ?? 0);
+        if ($pakettiId <= 0) {
+            http_response_code(400);
+            echo json_encode(['virhe' => 'Virheellinen kysymyspaketin tunniste.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $stmt = $conn->prepare('DELETE FROM kysymyspaketti WHERE id = ? AND opettaja_id = ?');
+        $stmt->execute([$pakettiId, $opettajaId]);
+        if ($stmt->rowCount() === 0) {
+            http_response_code(404);
+            echo json_encode(['virhe' => 'Kysymyspakettia ei löydy tai se ei ole sinun.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        echo json_encode(['poistettu' => true], JSON_UNESCAPED_UNICODE);
+    } catch (Throwable $e) {
+        http_response_code(500);
+        error_log($e->getMessage());
+        echo json_encode(['virhe' => 'Kysymyspaketin käsittely epäonnistui.'], JSON_UNESCAPED_UNICODE);
+    }
+
+    exit;
+}
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['action'] ?? '') === 'paketit') {
     header('Content-Type: application/json; charset=utf-8');
@@ -129,4 +243,23 @@ function haeKirjautunutKayttaja(PDO $conn): ?array
     $_SESSION['nimi'] = $kayttaja['Nimi'];
     $_SESSION['rooli'] = $kayttaja['Rooli'];
     return $kayttaja;
+}
+
+function haeOpettajaId(PDO $conn): ?int
+{
+    $kayttajaId = (int)($_SESSION['kayttaja_id'] ?? 0);
+    if ($kayttajaId <= 0) {
+        return null;
+    }
+
+    $stmt = $conn->prepare('SELECT rooli FROM kayttaja WHERE id = ? LIMIT 1');
+    $stmt->execute([$kayttajaId]);
+    $kayttaja = $stmt->fetch();
+
+    if (!$kayttaja || $kayttaja['rooli'] !== 'opettaja') {
+        return null;
+    }
+
+    $_SESSION['rooli'] = $kayttaja['rooli'];
+    return $kayttajaId;
 }
