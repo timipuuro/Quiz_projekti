@@ -1,216 +1,47 @@
-const questions = [
-    {
-        question: "Which is not a capital of South Africa?",
-        optionA: "Cape Town",
-        optionB: "Bloemfontein",
-        optionC: "Pretoria",
-        optionD: "Johannesburg",
-        correctOption: "optionD"
-    },
-
-    {
-        question: "What is the capital of Uruguay",
-        optionA: "Buenos Aires",
-        optionB: "Montevideo",
-        optionC: "La Paz",
-        optionD: "Santiago",
-        correctOption: "optionB"
-    },
-
-    {
-        question: "What is the highest mountain peak in the world above sea level?",
-        optionA: "K2",
-        optionB: "Mount Kilimanjaro",
-        optionC: "Denali",
-        optionD: "Mount Everest",
-        correctOption: "optionD"
-    },
-
-    {
-        question: "Which country is Prague in?",
-        optionA: "Hungary",
-        optionB: "Serbia",
-        optionC: "Czech Republic",
-        optionD: "Slovenia",
-        correctOption: "optionC"
-    },
-
-    {
-        question: "How many countries are in the United Kingdom?",
-        optionA: "2",
-        optionB: "1",
-        optionC: "3",
-        optionD: "4",
-        correctOption: "optionD"
-    },
-
-    {
-        question: "Which is the longest river in the world ?",
-        optionA: "River Nile",
-        optionB: "Long River",
-        optionC: "River Niger",
-        optionD: "Lake Chad",
-        correctOption: "optionA"
-    },
-
-    {
-        question: "What is the newest internationally recognized country in the world?",
-        optionA: "Guyana",
-        optionB: "Bahrain",
-        optionC: "South Sudan",
-        optionD: "Lebanon",
-        correctOption: "optionC"
-    },
-
-    {
-        question: "Which country is the largest in the world ?",
-        optionA: "Russia",
-        optionB: "Canada",
-        optionC: "China",
-        optionD: "Indonesia",
-        correctOption: "optionA"
-    },
-
-    {
-        question: "What country has the longest coastline in the world?",
-        optionA: "Indonesia",
-        optionB: "Norway",
-        optionC: "Philippines",
-        optionD: "Canada",
-        correctOption: "optionD"
-    },
 
 
 
-    {
-        question: "What country has the most islands?",
-        optionA: "Indonesia",
-        optionB: "Canada",
-        optionC: "Norway",
-        optionD: "Sweden",
-        correctOption: "optionD"
-    },
+let shuffledQuestions = []
+let questions = []
+let questionLimit = 10
 
-    {
-        question: "Where is the world tallest building located ?",
-        optionA: "Africa",
-        optionB: "California",
-        optionC: "Dubai",
-        optionD: "Italy",
-        correctOption: "optionC"
-    },
+async function loadQuestions() {
+    try {
+        const url = new URL("api.php", window.location.href)
+        url.searchParams.set("action", "kysymykset")
 
-    {
-        question: "The longest river in the United Kingdom is ?",
-        optionA: "River Severn",
-        optionB: "River Mersey",
-        optionC: "River Trent",
-        optionD: "River Tweed",
-        correctOption: "optionA"
-    },
-
-
-    {
-        question: "Curaçao is a constituent country of _____",
-        optionA: "Australia",
-        optionB: "the Kingdom of the Netherlands",
-        optionC: "China",
-        optionD: "the United Kingdom",
-        correctOption: "optionB"
-    },
-
-    {
-        question: "Which national team won the FIFA World Cup in 2006?",
-        optionA: "The Netherlands",
-        optionB: "Uruguay",
-        optionC: "Germany",
-        optionD: "Italy",
-        correctOption: "optionD"
-    },
-
-    
-
-    {
-        question: "Which country hosted the 1958 FIFA World Cup?",
-        optionA: "Italy",
-        optionB: "South Korea",
-        optionC: "Sweden",
-        optionD: "Mexico",
-        correctOption: "optionC"
-    },
-
-    {
-        question: "____ is the capital of Nigeria ?",
-        optionA: "Abuja",
-        optionB: "Lagos",
-        optionC: "Calabar",
-        optionD: "Kano",
-        correctOption: "optionA"
-    },
-
-    
-
-    {
-        question: "What is the capital of Germany ?",
-        optionA: "Munich",
-        optionB: "Dortmund",
-        optionC: "Leipzig",
-        optionD: "Berlin",
-        correctOption: "optionD"
-    },
-
-    {
-        question: "Which country is completely surrounded by South Africa?",
-        optionA: "Lesotho",
-        optionB: "Zimbabwe",
-        optionC: "Eswatini",
-        optionD: "Angola",
-        correctOption: "optionA"
-    },
-
-    {
-        question: "Which country has the most pyramids in the world?",
-        optionA: "Egypt",
-        optionB: "Mexico",
-        optionC: "China",
-        optionD: "Sudan",
-        correctOption: "optionD"
-    },
-
-    {
-        question: "Which city is the most populous metropolitan area in the world?",
-        optionA: "San Francisco",
-        optionB: "Tokyo",
-        optionC: "Canberra",
-        optionD: "London",
-        correctOption: "optionB"
-    },
-
-    {
-        question: "Which South American country is the only one with English as its official language?",
-        optionA: "Venezuela",
-        optionB: "Guyana",
-        optionC: ">Bolivia",
-        optionD: "Paraguy",
-        correctOption: "optionB"
-    },
-
-    
-
-]
-
-
-let shuffledQuestions = [] //empty array to hold shuffled selected questions out of all available questions
-
-function handleQuestions() { 
-    //function to shuffle and push 10 questions to shuffledQuestions array
-//app would be dealing with 10questions per session
-    while (shuffledQuestions.length <= 9) {
-        const random = questions[Math.floor(Math.random() * questions.length)]
-        if (!shuffledQuestions.includes(random)) {
-            shuffledQuestions.push(random)
+        const pakettiId = new URLSearchParams(window.location.search).get("paketti_id")
+        if (pakettiId) {
+            url.searchParams.set("paketti_id", pakettiId)
         }
+
+        const response = await fetch(url)
+        if (!response.ok) {
+            throw new Error("Kysymysten lataus epäonnistui")
+        }
+
+        const data = await response.json()
+        questions = data.questions || []
+        questionLimit = Math.min(questionLimit, questions.length)
+        NextQuestion(0)
+    } catch (error) {
+        console.error(error)
+        document.getElementById("display-question").innerHTML =
+            "Kysymyksiä ei voitu ladata tietokannasta."
     }
+}
+
+function handleQuestions() {
+    if (shuffledQuestions.length > 0) return
+
+    const availableQuestions = [...questions]
+    for (let i = availableQuestions.length - 1; i > 0; i--) {
+        const randomIndex = Math.floor(Math.random() * (i + 1))
+        ;[availableQuestions[i], availableQuestions[randomIndex]] =
+            [availableQuestions[randomIndex], availableQuestions[i]]
+    }
+
+    shuffledQuestions = availableQuestions.slice(0, questionLimit)
 }
 
 
@@ -224,19 +55,27 @@ let indexNumber = 0 //will be used in displaying next question
 function NextQuestion(index) {
     handleQuestions()
     const currentQuestion = shuffledQuestions[index]
+    if (!currentQuestion) {
+        handleEndGame()
+        return
+    }
     document.getElementById("question-number").innerHTML = questionNumber
     document.getElementById("player-score").innerHTML = playerScore
-    document.getElementById("display-question").innerHTML = currentQuestion.question;
-    document.getElementById("option-one-label").innerHTML = currentQuestion.optionA;
-    document.getElementById("option-two-label").innerHTML = currentQuestion.optionB;
-    document.getElementById("option-three-label").innerHTML = currentQuestion.optionC;
-    document.getElementById("option-four-label").innerHTML = currentQuestion.optionD;
+    document.getElementById("question-total").innerHTML = shuffledQuestions.length
+    document.getElementById("question-total-top").innerHTML = shuffledQuestions.length
+    document.getElementById("display-question").textContent = currentQuestion.question;
+    document.getElementById("option-one-label").textContent = currentQuestion.options[0];
+    document.getElementById("option-two-label").textContent = currentQuestion.options[1];
+    document.getElementById("option-three-label").textContent = currentQuestion.options[2];
+    document.getElementById("option-four-label").textContent = currentQuestion.options[3];
 
 }
 
 
 function checkForAnswer() {
     const currentQuestion = shuffledQuestions[indexNumber] //gets current Question 
+    if (!currentQuestion) return false
+
     const currentQuestionAnswer = currentQuestion.correctOption //gets current Question's answer
     const options = document.getElementsByName("option"); //gets all elements in dom with name of 'option' (in this the radio inputs)
     let correctOption = null
@@ -251,6 +90,7 @@ function checkForAnswer() {
     //checking to make sure a radio input has been checked or an option being chosen
     if (options[0].checked === false && options[1].checked === false && options[2].checked === false && options[3].checked == false) {
         document.getElementById('option-modal').style.display = "flex"
+        return false
     }
 
     //checking if checked radio button is same as answer
@@ -277,18 +117,19 @@ function checkForAnswer() {
             }, 1000)
         }
     })
+
+    return true
 }
 
 
 
 //called when the next button is called
 function handleNextQuestion() {
-    checkForAnswer() //check if player picked right or wrong option
+    if (!checkForAnswer()) return //check if player picked right or wrong option
     unCheckRadioButtons()
     //delays next question displaying for a second just for some effects so questions don't rush in on player
     setTimeout(() => {
-        if (indexNumber <= 9) {
-//displays next question as long as index number isn't greater than 9, remember index number starts from 0, so index 9 is question 10
+        if (indexNumber < shuffledQuestions.length) {
             NextQuestion(indexNumber)
         }
         else {
@@ -332,7 +173,9 @@ function handleEndGame() {
         remark = "Excellent, Keep the good work going."
         remarkColor = "green"
     }
-    const playerGrade = (playerScore / 10) * 100
+    const playerGrade = shuffledQuestions.length
+        ? Math.round((playerScore / shuffledQuestions.length) * 100)
+        : 0
 
     //data to display to score board
     document.getElementById('remarks').innerHTML = remark
@@ -351,11 +194,13 @@ function closeScoreModal() {
     wrongAttempt = 0
     indexNumber = 0
     shuffledQuestions = []
-    NextQuestion(indexNumber)
     document.getElementById('score-modal').style.display = "none"
+    loadQuestions()
 }
 
 //function to close warning modal
 function closeOptionModal() {
     document.getElementById('option-modal').style.display = "none"
 }
+
+loadQuestions()

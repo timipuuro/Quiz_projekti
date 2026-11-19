@@ -1,7 +1,7 @@
 const questions = [
     {
         question: "Millä PHP-tunnisteella PHP-koodi alkaa?",
-        optionA: "<scipt>",
+        optionA: "<script>",
         optionB: "<?",
         optionC: "<php>",
         optionD: "<?php",

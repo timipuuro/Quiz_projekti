@@ -1,4 +1,7 @@
-
+:root{
+    --surface: #46344d;
+    --surface-raised: #ffffff;
+}
 *{
     margin: 0;
     padding: 0;
@@ -24,7 +27,7 @@ main{
     align-items: center;
     background-color: rgb(24, 79, 124);
     background: url('../assets/background_image.jpg');
-    background-color : #1d1c1d;
+    background: linear-gradient(110deg, var(--surface), #370344);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -33,11 +36,12 @@ main{
 .game-quiz-container{
     width: 40rem;
     height: 30rem;
-    background-color: rgb(255, 255, 255);
+    background-color: #2b3035;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 30px;
 }
 
@@ -51,6 +55,7 @@ main{
 
 .game-details-container h1{
     font-size: 1.2rem;
+    color:rgb(167, 176, 196);
 }
 
 .game-question-container{
@@ -67,6 +72,7 @@ main{
     font-size: 1.1rem;
     text-align: center;
     padding: 3px;
+    color: rgb(167, 176, 196);
 }
 
 .game-options-container{
@@ -94,14 +100,14 @@ span label{
     cursor: pointer;
     transition: transform 0.3s;
     font-weight: 600;
-    color: rgb(22, 22, 22);
+    color: rgb(167, 176, 196);
 }
 
 span label:hover{
     -ms-transform: scale(1.12);
     -webkit-transform: scale(1.12);
     transform: scale(1.12);
-    color: white;
+    color: rgb(230, 186, 255);
 }
 
 input[type="radio"] {
@@ -111,7 +117,7 @@ input[type="radio"] {
 
 
 input[type=radio]:checked ~ .option {
-    background: paleturquoise;
+    background: rgb(102, 0, 150);
 }
 
 .next-button-container{
@@ -121,18 +127,18 @@ input[type=radio]:checked ~ .option {
     justify-content: center;
 }
 .next-button-container button{
-    width: 8rem;
-    height: 2rem;
+    width: 9rem;
+    height: 3rem;
     border-radius: 10px;
     background: none;
-    color: rgb(25, 25, 25);
+    color: rgb(167, 176, 196);
     font-weight: 600;
-    border: 2px solid gray;
+    border: 2px solid rgb(192, 192, 192);
     cursor: pointer;
     outline: none;
 }
 .next-button-container button:hover{
-    background-color: rgb(143, 93, 93);
+    background-color: rgb(102, 0, 150);
 }
 
 .modal-container{
@@ -181,7 +187,7 @@ input[type=radio]:checked ~ .option {
 }
 
 .grade-details p{
-    color: white;
+    color: rgb(110, 118, 138);
     text-align: center;
 }
 
@@ -198,7 +204,7 @@ input[type=radio]:checked ~ .option {
     height: 2rem;
     background: none;
     outline: none;
-    border: 1px solid rgb(252, 242, 241);
+    border: 1px solid rgb(110, 118, 138);
     color: white;
     font-size: 1.1rem;
     cursor: pointer;

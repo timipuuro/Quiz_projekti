@@ -39,7 +39,7 @@
                     <p class="eyebrow">ALOITA TÄSTÄ</p>
                     <h2 id="topics-title">Mikä kiinnostaa tänään?</h2>
                 </div>
-                <p>Valitse aihe ja anna uteliaisuuden viedä.</p>
+                <p>Valitse alla olevista aiheista.</p>
             </div>
             <div class="topic-grid">
                 <a href="perusteet.php">
@@ -60,7 +60,7 @@
                 </a>
                 <a href="historia.php">
                 <article class="topic-card">
-                    <span class="topic-icon topic-icon-green" aria-hidden="true">⌘</span>
+                    <span class="topic-icon topic-icon-green" aria-hidden="true">🕮</span>
                     <h3>Historia</h3>
                     <p>Suomen historia. Muistatko vielä historian tunneilta?</p>
                     <span class="topic-arrow" aria-hidden="true">↗</span>
@@ -68,7 +68,7 @@
                 </a>
                 <a href="haastavat.php">
                 <article class="topic-card">
-                    <span class="topic-icon topic-icon-orange" aria-hidden="true">♫</span>
+                    <span class="topic-icon topic-icon-orange" aria-hidden="true">!!</span>
                     <h3>Haastava</h3>
                     <p>Tämä sisältää matemaattisia pulmia, uskallatko yrittää?</p>
                     <span class="topic-arrow" aria-hidden="true">↗</span>
@@ -83,7 +83,6 @@
                 <h2 id="how-to-title">Pelaa, opi,<br>pelaa uudestaan.</h2>
             </div>
             <p>Valitse aihe, vastaa kysymyksiin ja katso, mitä kaikkea jo tiedät. Jokainen kierros on tilaisuus oppia jotain uutta.</p>
-            <a class="text-link" href="#tietovisat">Löydä oma aiheesi <span aria-hidden="true">→</span></a>
         </section>
     </main>
 
