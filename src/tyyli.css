@@ -514,6 +514,83 @@ h3 {
     line-height: 1.6;
 }
 
+.teacher-panel {
+    margin-bottom: 48px;
+    padding: 32px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+}
+
+.package-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.package-form label {
+    display: grid;
+    gap: 7px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.package-form input:not([type="checkbox"]),
+.package-form textarea,
+.package-form select {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--background);
+    color: var(--text);
+    font: inherit;
+}
+
+.package-publish {
+    display: flex !important;
+    align-items: center;
+}
+
+.package-form .button {
+    justify-self: start;
+}
+
+.teacher-panel-message {
+    min-height: 1.5em;
+    margin: 18px 0 8px;
+    color: var(--accent);
+    font-size: 13px;
+}
+
+.teacher-package-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.teacher-package {
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--background);
+}
+
+.teacher-package h3 {
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+.teacher-package p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.teacher-package .button {
+    min-height: 38px;
+}
+
 .topic-arrow {
     position: absolute;
     top: 24px;
@@ -628,6 +705,15 @@ a:focus-visible {
 
     .topic-card {
         min-height: 155px;
+    }
+
+    .teacher-panel {
+        padding: 24px 18px;
+    }
+
+    .package-form,
+    .teacher-package-list {
+        grid-template-columns: 1fr;
     }
 
     .how-to {

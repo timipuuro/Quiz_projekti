@@ -57,6 +57,48 @@ main{
     border-radius: 30px;
 }
 
+.package-container{
+    width: min(40rem, 90%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    color: rgb(230, 186, 255);
+}
+
+.package-list{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.package-card{
+    min-height: 10rem;
+    padding: 1.25rem;
+    border: 2px solid darkgray;
+    border-radius: 20px;
+    background-color: #2b3035;
+    color: rgb(167, 176, 196);
+    text-align: left;
+    cursor: pointer;
+}
+
+.package-card h2{
+    margin-bottom: 0.75rem;
+    color: rgb(230, 186, 255);
+}
+
+.package-card p{
+    margin-top: 0.35rem;
+}
+
+.package-card:hover,
+.package-card:focus-visible{
+    border-color: rgb(230, 186, 255);
+    background-color: rgb(102, 0, 150);
+}
+
 .game-details-container{
     width: 80%;
     height: 4rem;
@@ -278,6 +320,10 @@ a {
 }
 
 @media(min-width : 300px) and (max-width : 350px){
+    .package-list{
+        grid-template-columns: 1fr;
+    }
+
     .game-quiz-container{
         width: 90%;
         height: 80vh;

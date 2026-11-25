@@ -30,7 +30,7 @@ session_start();
             </div>
         </section>
 
-        <?php if (strtolower((string)($_SESSION['rooli'] ?? '')) === 'opettaja'): ?>
+     <?php if (strtolower((string)($_SESSION['rooli'] ?? '')) === 'opettaja'): ?>
             <?php include "ohjauspaneeli.php"; ?>
         <?php endif; ?>
         <section class="topics section-wrap" id="tietovisat" aria-labelledby="topics-title">

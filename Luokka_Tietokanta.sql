@@ -50,25 +50,26 @@ INSERT INTO `aihealue` (`id`, `nimi`) VALUES
 CREATE TABLE `kayttaja` (
   `id` int NOT NULL,
   `nimi` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `rooli` enum('opettaja','opiskelija') COLLATE utf8mb4_unicode_ci NOT NULL
+  `rooli` enum('opettaja','opiskelija') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `salasana_hash` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Vedos taulusta `kayttaja`
 --
 
-INSERT INTO `kayttaja` (`id`, `nimi`, `rooli`) VALUES
-(1, 'Matti Opettaja', 'opettaja'),
-(2, 'Anna Opettaja', 'opettaja'),
-(3, 'Pekka Opettaja', 'opettaja'),
-(4, 'Mikko Virtanen', 'opiskelija'),
-(5, 'Liisa Korhonen', 'opiskelija'),
-(6, 'Ville Nieminen', 'opiskelija'),
-(7, 'Emma Laine', 'opiskelija'),
-(8, 'Oskari Heikkinen', 'opiskelija'),
-(9, 'Sofia Mäkelä', 'opiskelija'),
-(10, 'Elias Hämäläinen', 'opiskelija'),
-(11, 'Aino Lehtinen', 'opiskelija');
+INSERT INTO `kayttaja` (`id`, `nimi`, `rooli`, `salasana_hash`) VALUES
+(1, 'Matti Opettaja', 'opettaja', NULL),
+(2, 'Anna Opettaja', 'opettaja', NULL),
+(3, 'Pekka Opettaja', 'opettaja', NULL),
+(4, 'Mikko Virtanen', 'opiskelija', NULL),
+(5, 'Liisa Korhonen', 'opiskelija', NULL),
+(6, 'Ville Nieminen', 'opiskelija', NULL),
+(7, 'Emma Laine', 'opiskelija', NULL),
+(8, 'Oskari Heikkinen', 'opiskelija', NULL),
+(9, 'Sofia Mäkelä', 'opiskelija', NULL),
+(10, 'Elias Hämäläinen', 'opiskelija', NULL),
+(11, 'Aino Lehtinen', 'opiskelija', NULL);
 
 -- --------------------------------------------------------
 
@@ -286,7 +287,8 @@ ALTER TABLE `aihealue`
 -- Indeksit taulukolle `kayttaja`
 --
 ALTER TABLE `kayttaja`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_kayttaja_nimi` (`nimi`);
 
 --
 -- Indeksit taulukolle `kysymys`
