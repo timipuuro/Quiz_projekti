@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="fi">
 <head>
@@ -15,23 +18,21 @@
             <div class="hero-content">
                 <h1 id="hero-title">Tietovisoja<br><span>Kysymyspaketteja</span></h1>
                 <p class="hero-copy">Onko tylsää? Haasta itseäsi tekemällä alla olevia kysymyspaketteja.</p>
-
+                <br> <p class="hero-copya"> (Varmista, että olet sisäänkirjautunut tai jos ei ole tiliä. Rekisteröidy.)</p>
+                
+                
             </div>
             <div class="hero-art" aria-hidden="true">
                 <div class="orbit orbit-one"></div>
                 <div class="orbit orbit-two"></div>
-                <div class="quiz-card">
-                    <span class="quiz-card-label">PÄIVÄN KYSYMYS</span>
-                    <span class="quiz-card-icon">?</span>
-                    <span class="quiz-card-line"></span>
-                    <span class="quiz-card-line quiz-card-line-short"></span>
-                    <div class="quiz-card-footer"><span></span><span></span><span></span></div>
-                </div>
                 <span class="spark spark-one">✳</span>
                 <span class="spark spark-two">✦</span>
             </div>
         </section>
 
+        <?php if (strtolower((string)($_SESSION['rooli'] ?? '')) === 'opettaja'): ?>
+            <?php include "ohjauspaneeli.php"; ?>
+        <?php endif; ?>
         <section class="topics section-wrap" id="tietovisat" aria-labelledby="topics-title">
             <div class="section-heading">
                 <div>
@@ -44,19 +45,10 @@
                 <p>Haetaan kysymyspaketteja...</p>
             </div>
         </section>
-
-        <section class="how-to section-wrap" id="miten-pelataan" aria-labelledby="how-to-title">
-            <div>
-                <p class="eyebrow">HELPPO ALOITTAA</p>
-                <h2 id="how-to-title">Pelaa, opi,<br>pelaa uudestaan.</h2>
-            </div>
-            <p>Valitse aihe, vastaa kysymyksiin ja katso, mitä kaikkea jo tiedät. Jokainen kierros on tilaisuus oppia jotain uutta.</p>
-            <a class="text-link" href="#tietovisat">Löydä oma aiheesi <span aria-hidden="true">→</span></a>
-        </section>
     </main>
 
     <footer class="site-footer">
-        <a class="brand footer-brand" href="index.php"><span class="brand-mark">?</span> tietovisa</a>
+    
     </footer>
 
     <script>
