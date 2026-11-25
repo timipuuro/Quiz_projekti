@@ -229,7 +229,7 @@ function haeKirjautunutKayttaja(PDO $conn): ?array
     }
 
     $stmt = $conn->prepare(
-        'SELECT Kayttaja_id, Nimi, Rooli FROM kayttaja WHERE Kayttaja_id = ? LIMIT 1'
+        'SELECT id, nimi, rooli FROM kayttaja WHERE id = ? LIMIT 1'
     );
     $stmt->execute([$kayttajaId]);
     $kayttaja = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -240,8 +240,8 @@ function haeKirjautunutKayttaja(PDO $conn): ?array
         return null;
     }
 
-    $_SESSION['nimi'] = $kayttaja['Nimi'];
-    $_SESSION['rooli'] = $kayttaja['Rooli'];
+    $_SESSION['nimi'] = $kayttaja['nimi'];
+    $_SESSION['rooli'] = $kayttaja['rooli'];
     return $kayttaja;
 }
 

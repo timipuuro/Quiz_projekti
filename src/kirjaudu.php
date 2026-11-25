@@ -13,23 +13,23 @@ if (!empty($_SESSION['kayttaja_id'])) {
 $virhe = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $sahkoposti = strtolower(trim((string)($_POST['sahkoposti'] ?? '')));
+    $nimi = trim((string)($_POST['nimi'] ?? ''));
     $salasana = (string)($_POST['salasana'] ?? '');
 
-    if ($sahkoposti === '' || $salasana === '') {
-        $virhe = 'Täytä sähköposti ja salasana.';
+    if ($nimi === '' || $salasana === '') {
+        $virhe = 'Täytä nimi ja salasana.';
     } else {
         $stmt = $conn->prepare(
             'SELECT id, nimi, rooli, salasana_hash
              FROM kayttaja
-             WHERE sahkoposti = ?
+             WHERE nimi = ?
              LIMIT 1'
         );
-        $stmt->execute([$sahkoposti]);
+        $stmt->execute([$nimi]);
         $kayttaja = $stmt->fetch();
 
         if (!$kayttaja || !password_verify($salasana, (string)$kayttaja['salasana_hash'])) {
-            $virhe = 'Sähköposti tai salasana on väärin.';
+            $virhe = 'Nimi tai salasana on väärin.';
         } else {
             session_regenerate_id(true);
             $_SESSION['kayttaja_id'] = (int)$kayttaja['id'];
@@ -58,9 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p class="auth-error" role="alert"><?= htmlspecialchars($virhe) ?></p>
             <?php endif; ?>
             <form method="post" class="auth-form">
-                <label for="sahkoposti">Sähköposti</label>
-                <input id="sahkoposti" name="sahkoposti" type="email" autocomplete="email" required
-                       value="<?= htmlspecialchars($sahkoposti ?? '') ?>">
+                <label for="nimi">Nimi</label>
+                <input id="nimi" name="nimi" autocomplete="username" required maxlength="100"
+                       value="<?= htmlspecialchars($nimi ?? '') ?>">
                 <label for="salasana">Salasana</label>
                 <input id="salasana" name="salasana" type="password" autocomplete="current-password" required>
                 <button class="button button-primary" type="submit">Kirjaudu sisään</button>

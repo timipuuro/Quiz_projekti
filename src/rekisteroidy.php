@@ -12,41 +12,42 @@ if (!empty($_SESSION['kayttaja_id'])) {
 
 $virhe = '';
 $nimi = '';
-$sahkoposti = '';
+$rooli = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nimi = trim((string)($_POST['nimi'] ?? ''));
-    $sahkoposti = strtolower(trim((string)($_POST['sahkoposti'] ?? '')));
+    $rooli = (string)($_POST['rooli'] ?? '');
     $salasana = (string)($_POST['salasana'] ?? '');
 
-    if ($nimi === '' || $sahkoposti === '' || $salasana === '') {
+    if ($nimi === '' || $rooli === '' || $salasana === '') {
         $virhe = 'Täytä kaikki kentät.';
-    } elseif (!filter_var($sahkoposti, FILTER_VALIDATE_EMAIL)) {
-        $virhe = 'Sähköposti ei ole kelvollinen.';
+    } elseif (!in_array($rooli, ['opiskelija', 'opettaja'], true)) {
+        $virhe = 'Valitse kelvollinen rooli.';
+    } elseif (preg_match('/\A.{1,100}\z/us', $nimi) !== 1) {
+        $virhe = 'Nimen enimmäispituus on 100 merkkiä.';
     } elseif (strlen($salasana) < 8) {
         $virhe = 'Salasanan tulee olla vähintään 8 merkkiä.';
     } else {
-        $stmt = $conn->prepare('SELECT id FROM kayttaja WHERE sahkoposti = ? LIMIT 1');
-        $stmt->execute([$sahkoposti]);
+        $stmt = $conn->prepare('SELECT id FROM kayttaja WHERE nimi = ? LIMIT 1');
+        $stmt->execute([$nimi]);
 
         if ($stmt->fetch()) {
-            $virhe = 'Sähköpostilla on jo käyttäjä.';
+            $virhe = 'Tällä nimellä on jo käyttäjä.';
         } else {
             $stmt = $conn->prepare(
-                'INSERT INTO kayttaja (nimi, rooli, sahkoposti, salasana_hash)
-                 VALUES (?, ?, ?, ?)'
+                'INSERT INTO kayttaja (nimi, rooli, salasana_hash)
+                 VALUES (?, ?, ?)'
             );
             $stmt->execute([
                 $nimi,
-                'opiskelija',
-                $sahkoposti,
+                $rooli,
                 password_hash($salasana, PASSWORD_DEFAULT)
             ]);
 
             session_regenerate_id(true);
             $_SESSION['kayttaja_id'] = (int)$conn->lastInsertId();
             $_SESSION['nimi'] = $nimi;
-            $_SESSION['rooli'] = 'opiskelija';
+            $_SESSION['rooli'] = $rooli;
             header('Location: index.php');
             exit;
         }
@@ -71,11 +72,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
             <form method="post" class="auth-form">
                 <label for="nimi">Nimi</label>
-                <input id="nimi" name="nimi" autocomplete="name" required maxlength="100"
+                <input id="nimi" name="nimi" autocomplete="username" required maxlength="100"
                        value="<?= htmlspecialchars($nimi) ?>">
-                <label for="sahkoposti">Sähköposti</label>
-                <input id="sahkoposti" name="sahkoposti" type="email" autocomplete="email" required
-                       value="<?= htmlspecialchars($sahkoposti) ?>">
+                <label for="rooli">Rooli</label>
+                <select id="rooli" name="rooli" required>
+                    <option value="" disabled <?= $rooli === '' ? 'selected' : '' ?>>Valitse rooli</option>
+                    <option value="opiskelija" <?= $rooli === 'opiskelija' ? 'selected' : '' ?>>Opiskelija</option>
+                    <option value="opettaja" <?= $rooli === 'opettaja' ? 'selected' : '' ?>>Opettaja</option>
+                </select>
                 <label for="salasana">Salasana</label>
                 <input id="salasana" name="salasana" type="password" autocomplete="new-password" required minlength="8">
                 <button class="button button-primary" type="submit">Luo tunnus</button>
