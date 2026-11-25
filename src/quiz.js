@@ -4,91 +4,15 @@
 let shuffledQuestions = []
 let questions = []
 let questionLimit = 10
-let selectedPackageId = null
-
-async function loadPackages() {
-    try {
-        const url = new URL("api.php", window.location.href)
-        url.searchParams.set("action", "paketit")
-
-        const response = await fetch(url)
-        if (!response.ok) {
-            throw new Error("Pakettien lataus epäonnistui")
-        }
-
-        const data = await response.json()
-        const packages = data.packages || []
-        const packageList = document.getElementById("package-list")
-        packageList.innerHTML = ""
-
-        if (packages.length === 0) {
-            packageList.innerHTML = "<p>Julkaistuja kysymyspaketteja ei löytynyt.</p>"
-            return
-        }
-
-        packages.forEach((quizPackage) => {
-            const button = document.createElement("button")
-            button.type = "button"
-            button.className = "package-card"
-            button.innerHTML =
-                `<h2>${escapeHtml(quizPackage.nimi)}</h2>` +
-                `<p>${escapeHtml(quizPackage.aihealue || "Ei aihealuetta")}</p>` +
-                `<p>${escapeHtml(quizPackage.kuvaus || "")}</p>` +
-                `<p>Kysymyksiä: ${Number(quizPackage.kysymys_maara)}</p>`
-            button.addEventListener("click", () => startPackage(Number(quizPackage.id)))
-            packageList.appendChild(button)
-        })
-
-        const pakettiId = new URLSearchParams(window.location.search).get("paketti_id")
-        if (pakettiId) {
-            startPackage(Number(pakettiId))
-        }
-    } catch (error) {
-        console.error(error)
-        document.getElementById("package-list").innerHTML =
-            "<p>Kysymyspaketteja ei voitu ladata tietokannasta.</p>"
-    }
-}
-
-function escapeHtml(value) {
-    const element = document.createElement("span")
-    element.textContent = String(value)
-    return element.innerHTML
-}
-
-function startPackage(packageId) {
-    selectedPackageId = packageId
-    resetQuizState()
-    document.getElementById("package-container").style.display = "none"
-    document.getElementById("game-quiz-container").style.display = "flex"
-    loadQuestions()
-}
-
-function resetQuizState() {
-    questionNumber = 1
-    playerScore = 0
-    wrongAttempt = 0
-    indexNumber = 0
-    shuffledQuestions = []
-    questions = []
-    questionLimit = 10
-}
-
-function showPackageSelection() {
-    resetQuizState()
-    document.getElementById("score-modal").style.display = "none"
-    document.getElementById("game-quiz-container").style.display = "none"
-    document.getElementById("package-container").style.display = "flex"
-    selectedPackageId = null
-}
 
 async function loadQuestions() {
     try {
         const url = new URL("api.php", window.location.href)
         url.searchParams.set("action", "kysymykset")
 
-        if (selectedPackageId) {
-            url.searchParams.set("paketti_id", String(selectedPackageId))
+        const pakettiId = new URLSearchParams(window.location.search).get("paketti_id")
+        if (pakettiId) {
+            url.searchParams.set("paketti_id", pakettiId)
         }
 
         const response = await fetch(url)
@@ -235,20 +159,17 @@ function unCheckRadioButtons() {
 function handleEndGame() {
     let remark = null
     let remarkColor = null
-    const questionCount = shuffledQuestions.length
-    const passLimit = questionCount === 0 ? 0 : Math.ceil(questionCount * 0.7)
-    const averageLimit = questionCount === 0 ? 0 : Math.ceil(questionCount * 0.4)
 
     // condition check for player remark and remark color
-    if (playerScore < averageLimit) {
+    if (playerScore <= 3) {
         remark = "Bad Grades, Keep Practicing."
         remarkColor = "red"
     }
-    else if (playerScore < passLimit) {
+    else if (playerScore >= 4 && playerScore < 7) {
         remark = "Average Grades, You can do better."
         remarkColor = "orange"
     }
-    else {
+    else if (playerScore >= 7) {
         remark = "Excellent, Keep the good work going."
         remarkColor = "green"
     }
@@ -268,7 +189,13 @@ function handleEndGame() {
 
 //closes score modal, resets game and reshuffles questions
 function closeScoreModal() {
-    showPackageSelection()
+    questionNumber = 1
+    playerScore = 0
+    wrongAttempt = 0
+    indexNumber = 0
+    shuffledQuestions = []
+    document.getElementById('score-modal').style.display = "none"
+    loadQuestions()
 }
 
 //function to close warning modal
@@ -276,4 +203,4 @@ function closeOptionModal() {
     document.getElementById('option-modal').style.display = "none"
 }
 
-loadPackages()
+loadQuestions()

@@ -21,6 +21,7 @@ body {
     min-width: 320px;
     margin: 0;
     background: var(--background);
+    background: linear-gradient(110deg, var(--background), #370344);
     color: var(--text);
     font-family: "Segoe UI", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -96,6 +97,75 @@ a {
 .nav-cta span,
 .button-primary span {
     margin-left: 8px;
+}
+
+.nav-user {
+    color: var(--muted);
+}
+
+.auth-wrap {
+    min-height: calc(100vh - 88px);
+    display: grid;
+    place-items: center;
+    padding: 64px 20px;
+}
+
+.auth-card {
+    width: min(420px, 100%);
+    padding: 32px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+      background: linear-gradient(110deg, var(--background), #370344);
+}
+
+.auth-card h1 {
+    margin-bottom: 24px;
+    color: #c5c4c9;
+}
+
+.auth-form {
+    display: grid;
+    gap: 10px;
+}
+
+.auth-form label {
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #c5c4c9;
+
+}
+
+.auth-form input {
+    width: 100%;
+    height: 46px;
+    margin-bottom: 8px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #191a1e;
+    color: var(--text);
+}
+
+.auth-form .button {
+    width: 100%;
+    margin-top: 8px;
+    cursor: pointer;
+}
+
+.auth-error {
+    margin-bottom: 18px;
+    padding: 10px 12px;
+    border: 1px solid #b75e5e;
+    border-radius: 8px;
+    color: #ffd4d4;
+}
+
+.auth-card > p:last-child {
+    margin: 20px 0 0;
+    color: var(--muted);
+    font-size: 13px;
 }
 
 .hero {

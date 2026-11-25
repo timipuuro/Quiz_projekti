@@ -14,9 +14,12 @@ require_once "tietokanta.php";
         content="width=device-width, initial-scale=1.0"
     >
     <link rel="stylesheet" href="quiz.css">
+    
 </head>
 <body>
+    
     <main>
+        <?php include "header1.php"; ?>
         <!-- creating a modal for when quiz ends -->
         <div class="modal-container" id="score-modal">
 
@@ -25,6 +28,7 @@ require_once "tietokanta.php";
                 <h1>Congratulations, Quiz Completed.</h1>
 
                 <div class="grade-details">
+                    <p>Attempts : 3</p>
                     <p>Wrong Answers : <span id="wrong-answers"></span></p>
                     <p>Right Answers : <span id="right-answers"></span></p>
                     <p>Grade : <span id="grade-percentage"></span>%</p>
@@ -32,19 +36,14 @@ require_once "tietokanta.php";
                 </div>
 
                 <div class="modal-button-container">
-                    <button onclick="closeScoreModal()">Valitse uusi paketti</button>
+                    <button onclick="closeScoreModal()">Continue</button>
                 </div>
 
             </div>
         </div>
 <!-- end of modal of quiz details-->
 
-<div class="package-container" id="package-container">
-    <h1>Valitse kysymyspaketti</h1>
-    <div class="package-list" id="package-list"></div>
-</div>
-
-<div class="game-quiz-container" id="game-quiz-container" style="display: none;">
+        <div class="game-quiz-container">
 
             <div class="game-details-container">
                 <h1>Score : <span id="player-score"></span> / <span id="question-total"></span></h1>
