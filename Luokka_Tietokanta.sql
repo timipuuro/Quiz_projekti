@@ -50,25 +50,27 @@ INSERT INTO `aihealue` (`id`, `nimi`) VALUES
 CREATE TABLE `kayttaja` (
   `id` int NOT NULL,
   `nimi` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `rooli` enum('opettaja','opiskelija') COLLATE utf8mb4_unicode_ci NOT NULL
+  `rooli` enum('opettaja','opiskelija') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sahkoposti` varchar(190) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `salasana_hash` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Vedos taulusta `kayttaja`
 --
 
-INSERT INTO `kayttaja` (`id`, `nimi`, `rooli`) VALUES
-(1, 'Matti Opettaja', 'opettaja'),
-(2, 'Anna Opettaja', 'opettaja'),
-(3, 'Pekka Opettaja', 'opettaja'),
-(4, 'Mikko Virtanen', 'opiskelija'),
-(5, 'Liisa Korhonen', 'opiskelija'),
-(6, 'Ville Nieminen', 'opiskelija'),
-(7, 'Emma Laine', 'opiskelija'),
-(8, 'Oskari Heikkinen', 'opiskelija'),
-(9, 'Sofia Mäkelä', 'opiskelija'),
-(10, 'Elias Hämäläinen', 'opiskelija'),
-(11, 'Aino Lehtinen', 'opiskelija');
+INSERT INTO `kayttaja` (`id`, `nimi`, `rooli`, `sahkoposti`, `salasana_hash`) VALUES
+(1, 'Matti Opettaja', 'opettaja', 'matti@example.fi', NULL),
+(2, 'Anna Opettaja', 'opettaja', 'anna@example.fi', NULL),
+(3, 'Pekka Opettaja', 'opettaja', 'pekka@example.fi', NULL),
+(4, 'Mikko Virtanen', 'opiskelija', 'mikko@example.fi', NULL),
+(5, 'Liisa Korhonen', 'opiskelija', 'liisa@example.fi', NULL),
+(6, 'Ville Nieminen', 'opiskelija', 'ville@example.fi', NULL),
+(7, 'Emma Laine', 'opiskelija', 'emma@example.fi', NULL),
+(8, 'Oskari Heikkinen', 'opiskelija', 'oskari@example.fi', NULL),
+(9, 'Sofia Mäkelä', 'opiskelija', 'sofia@example.fi', NULL),
+(10, 'Elias Hämäläinen', 'opiskelija', 'elias@example.fi', NULL),
+(11, 'Aino Lehtinen', 'opiskelija', 'aino@example.fi', NULL);
 
 -- --------------------------------------------------------
 
@@ -286,7 +288,8 @@ ALTER TABLE `aihealue`
 -- Indeksit taulukolle `kayttaja`
 --
 ALTER TABLE `kayttaja`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_kayttaja_sahkoposti` (`sahkoposti`);
 
 --
 -- Indeksit taulukolle `kysymys`
