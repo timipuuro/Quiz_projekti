@@ -9,10 +9,15 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
         <a class="nav-link" href="index.php">Etusivu</a>
         <?php if (!empty($_SESSION['kayttaja_id'])): ?>
             <span class="nav-user"><?= htmlspecialchars($_SESSION['nimi'] ?? 'Käyttäjä') ?></span>
+            <?php if (($_SESSION['rooli'] ?? '') === 'opettaja'): ?>
+                <a class="nav-link" href="paneeli.php">Ohjauspaneeli</a>
+            <?php endif; ?>
             <a class="nav-cta" href="ulos.php">Kirjaudu ulos <span aria-hidden="true">→</span></a>
         <?php else: ?>
             <a class="nav-link" href="kirjaudu.php">Kirjaudu sisään</a>
             <a class="nav-cta" href="rekisteroidy.php">Rekisteröidy <span aria-hidden="true">→</span></a>
+            
         <?php endif; ?>
+        
     </nav>
 </header>

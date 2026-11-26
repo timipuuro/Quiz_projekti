@@ -84,7 +84,9 @@
             </div>
             <p>Valitse aihe, vastaa kysymyksiin ja katso, mitä kaikkea jo tiedät. Jokainen kierros on tilaisuus oppia jotain uutta.</p>
             <a class="text-link" href="#tietovisat">Löydä oma aiheesi <span aria-hidden="true">→</span></a>
+            <a class="nav-link" href="paneeli.php">Ohjauspaneeli</a>
         </section>
+        
     </main>
 
     <footer class="site-footer">
