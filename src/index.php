@@ -18,10 +18,10 @@ session_start();
             <div class="hero-content">
                 <h1 id="hero-title">Tietovisoja<br><span>Kysymyspaketteja</span></h1>
                 <p class="hero-copy">Onko tylsää? Haasta itseäsi tekemällä alla olevia kysymyspaketteja.</p>
-                <? if (empty($_SESSION['kayttaja_id'])): ?>
-                    
+                <?php if (empty($_SESSION['kayttaja_id'])): ?>
                 <br> <p class="hero-copya"> (Varmista, että olet sisäänkirjautunut tai jos ei ole tiliä. Rekisteröidy.)</p>
-                <? endif; ?>
+                <?php endif ?>
+                
                 
             </div>
             <div class="hero-art" aria-hidden="true">
@@ -32,16 +32,26 @@ session_start();
             </div>
         </section>
 
-     <?php if (strtolower((string)($_SESSION['rooli'] ?? '')) === 'opettaja'): ?>
+        <?php if (strtolower((string)($_SESSION['rooli'] ?? '')) === 'opettaja'): ?>
             <?php include "ohjauspaneeli.php"; ?>
         <?php endif; ?>
         <section class="topics section-wrap" id="tietovisat" aria-labelledby="topics-title">
             <div class="section-heading">
                 <div>
                     <p class="eyebrow">ALOITA TÄSTÄ</p>
-                    <h2 id="topics-title">Mikä kiinnostaa tänään?</h2>
+                    <h2 id="topics-title">Valitse kategoria</h2>
                 </div>
-                <p>Valitse aihe ja anna uteliaisuuden viedä.</p>
+                <p>Valitse aihe</p>
+            </div>
+            <div id="haetutpaketit">
+                <form id="paketti-haku-lomake">
+                    <input type="search" id="paketti-haku-kenttä" placeholder="Hae tunnuksella" aria-label="Hae kysymyspaketti tunnuksella">
+                    <button type="submit">Hae</button>
+                    <button id="tyhjenna" type="button" onclick="hakutyhjennys()">Tyhjennä lomake</button>
+                </form>
+                <ul id="haku-paketti">
+                    
+                </ul>
             </div>
             <div class="topic-grid" id="package-grid">
                 <p>Haetaan kysymyspaketteja...</p>
@@ -53,51 +63,6 @@ session_start();
     
     </footer>
 
-    <script>
-        async function loadIndexPackages() {
-            const grid = document.getElementById("package-grid");
-
-            try {
-                const response = await fetch("api.php?action=paketit");
-                if (!response.ok) {
-                    throw new Error("Pakettien lataus epäonnistui");
-                }
-
-                const data = await response.json();
-                const packages = data.packages || [];
-                grid.innerHTML = "";
-
-                if (packages.length === 0) {
-                    grid.innerHTML = "<p>Julkaistuja kysymyspaketteja ei löytynyt.</p>";
-                    return;
-                }
-
-                packages.forEach((quizPackage) => {
-                    const link = document.createElement("a");
-                    link.href = `quiz.php?paketti_id=${encodeURIComponent(quizPackage.id)}`;
-                    link.innerHTML =
-                        `<article class="topic-card">
-                            <span class="topic-icon topic-icon-purple" aria-hidden="true">✦</span>
-                            <h3>${escapePackageHtml(quizPackage.nimi)}</h3>
-                            <p>${escapePackageHtml(quizPackage.kuvaus || quizPackage.aihealue || "")}</p>
-                            <p>${Number(quizPackage.kysymys_maara)} kysymystä</p>
-                            <span class="topic-arrow" aria-hidden="true">↗</span>
-                        </article>`;
-                    grid.appendChild(link);
-                });
-            } catch (error) {
-                console.error(error);
-                grid.innerHTML = "<p>Kysymyspaketteja ei voitu ladata tietokannasta.</p>";
-            }
-        }
-
-        function escapePackageHtml(value) {
-            const element = document.createElement("span");
-            element.textContent = String(value);
-            return element.innerHTML;
-        }
-
-        loadIndexPackages();
-    </script>
+    <script src="paketti.js"></script>
 </body>
 </html>
