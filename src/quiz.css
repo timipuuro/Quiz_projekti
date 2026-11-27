@@ -45,6 +45,12 @@ main{
     background-position: center;
 }
 
+.quiz-package-title {
+    margin-bottom: 1.25rem;
+    color: rgb(230, 186, 255);
+    text-align: center;
+}
+
 .game-quiz-container{
     width: 40rem;
     height: 30rem;

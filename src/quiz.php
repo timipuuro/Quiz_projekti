@@ -1,25 +1,53 @@
  <?php
-require_once "tietokanta.php";
+ require_once "tietokanta.php";
 
-?>
+ $pakettiId = (int)($_GET['paketti_id'] ?? 0);
+ $packageName = "Kysymyspaketti";
+ $pageError = null;
+
+ if ($pakettiId <= 0) {
+     $pageError = "Valitse ensin kysymyspaketti.";
+ } else {
+     try {
+         $stmt = $conn->prepare(
+             'SELECT nimi
+              FROM kysymyspaketti
+              WHERE id = ? AND julkaistu = 1
+              LIMIT 1'
+         );
+         $stmt->execute([$pakettiId]);
+         $package = $stmt->fetch();
+
+         if (!$package) {
+             $pageError = "Kysymyspaketti ei ole julkinen tai sitä ei löydy.";
+         } else {
+             $packageName = $package['nimi'];
+         }
+     } catch (Throwable $e) {
+         error_log($e->getMessage());
+         $pageError = "Kysymyspaketin tietoja ei voitu ladata.";
+     }
+ }
+ ?>
  
  <!DOCTYPE html>
 <html lang="fi">
 <head>
-  
     <meta charset="UTF-8">
- 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($packageName, ENT_QUOTES, 'UTF-8') ?> - Kysymys kuuluu</title>
     <link rel="stylesheet" href="quiz.css">
-    
 </head>
 <body>
-    
     <main>
         <?php include "header1.php"; ?>
+        <h1 class="quiz-package-title"><?= htmlspecialchars($packageName, ENT_QUOTES, 'UTF-8') ?></h1>
+        <?php if ($pageError): ?>
+            <div class="game-quiz-container">
+                <p><?= htmlspecialchars($pageError, ENT_QUOTES, 'UTF-8') ?></p>
+                <a class="button" href="index.php">Palaa etusivulle</a>
+            </div>
+        <?php else: ?>
         <!-- creating a modal for when quiz ends -->
         <div class="modal-container" id="score-modal">
 
@@ -100,10 +128,10 @@ require_once "tietokanta.php";
             </div>
 
         </div>
+        <?php endif; ?>
     </main>
-    
-    <script src="quiz.js"></script>
-    
-</body>
+    <?php if (!$pageError): ?>
+        <script src="quiz.js"></script>
+    <?php endif; ?>
 </body>
 </html>

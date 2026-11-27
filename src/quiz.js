@@ -22,6 +22,13 @@ async function loadQuestions() {
 
         const data = await response.json()
         questions = data.questions || []
+        if (questions.length === 0) {
+            document.getElementById("display-question").textContent =
+                "Tässä kysymyspaketissa ei ole vielä kysymyksiä."
+            document.getElementById("question-total").textContent = "0"
+            document.getElementById("question-total-top").textContent = "0"
+            return
+        }
         questionLimit = Math.min(questionLimit, questions.length)
         NextQuestion(0)
     } catch (error) {
@@ -160,22 +167,23 @@ function handleEndGame() {
     let remark = null
     let remarkColor = null
 
-    // condition check for player remark and remark color
-    if (playerScore <= 3) {
-        remark = "Bad Grades, Keep Practicing."
-        remarkColor = "red"
-    }
-    else if (playerScore >= 4 && playerScore < 7) {
-        remark = "Average Grades, You can do better."
-        remarkColor = "orange"
-    }
-    else if (playerScore >= 7) {
-        remark = "Excellent, Keep the good work going."
-        remarkColor = "green"
-    }
     const playerGrade = shuffledQuestions.length
         ? Math.round((playerScore / shuffledQuestions.length) * 100)
         : 0
+
+    // Use the percentage because the number of questions is not always 10.
+    if (playerGrade >= 70) {
+        remark = "Excellent, Keep the good work going."
+        remarkColor = "green"
+    }
+    else if (playerGrade >= 40) {
+        remark = "Average Grades, You can do better."
+        remarkColor = "orange"
+    }
+    else {
+        remark = "Bad Grades, Keep Practicing."
+        remarkColor = "red"
+    }
 
     //data to display to score board
     document.getElementById('remarks').innerHTML = remark
