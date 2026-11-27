@@ -4,7 +4,7 @@ require_once "tietokanta.php";
 
 session_start();
 
-$teacherActions = ['omat_paketit', 'luo_paketti', 'poista_paketti'];
+$teacherActions = ['omat_paketit', 'luo_paketti', 'vaihda_julkisuus', 'poista_paketti'];
 $action = $_GET['action'] ?? '';
 
 if (in_array($action, $teacherActions, true)) {
@@ -63,6 +63,7 @@ if (in_array($action, $teacherActions, true)) {
             $kuvaus = trim((string)($_POST['kuvaus'] ?? ''));
             $aihealueId = (int)($_POST['aihealue_id'] ?? 0);
             $julkaistu = isset($_POST['julkaistu']) ? 1 : 0;
+            $kysymykset = json_decode((string)($_POST['kysymykset'] ?? '[]'), true);
 
             if ($nimi === '' || preg_match('/\A.{1,150}\z/us', $nimi) !== 1) {
                 http_response_code(400);
@@ -82,14 +83,96 @@ if (in_array($action, $teacherActions, true)) {
                 $aihealueId = null;
             }
 
-            $stmt = $conn->prepare(
+            if (!is_array($kysymykset) || count($kysymykset) === 0) {
+                http_response_code(400);
+                echo json_encode(['virhe' => 'Lisää vähintään yksi kysymys.'], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+            if (count($kysymykset) > 50) {
+                http_response_code(400);
+                echo json_encode(['virhe' => 'Paketissa voi olla enintään 50 kysymystä.'], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+
+            foreach ($kysymykset as $kysymys) {
+                $teksti = trim((string)($kysymys['teksti'] ?? ''));
+                $selite = isset($kysymys['selite']) ? trim((string)$kysymys['selite']) : '';
+                $vaihtoehdot = $kysymys['vaihtoehdot'] ?? null;
+                $oikeaIndeksi = $kysymys['oikea_indeksi'] ?? null;
+
+                if ($teksti === '' || preg_match('/\A.{1,500}\z/us', $teksti) !== 1) {
+                    http_response_code(400);
+                    echo json_encode(['virhe' => 'Jokaisella kysymyksellä on oltava teksti (enintään 500 merkkiä).'], JSON_UNESCAPED_UNICODE);
+                    exit;
+                }
+                if ($selite !== '' && preg_match('/\A.{0,1000}\z/us', $selite) !== 1) {
+                    http_response_code(400);
+                    echo json_encode(['virhe' => 'Kysymyksen selite voi olla enintään 1000 merkkiä.'], JSON_UNESCAPED_UNICODE);
+                    exit;
+                }
+                if (!is_array($vaihtoehdot) || count($vaihtoehdot) !== 4) {
+                    http_response_code(400);
+                    echo json_encode(['virhe' => 'Jokaisella kysymyksellä on oltava neljä vastausvaihtoehtoa.'], JSON_UNESCAPED_UNICODE);
+                    exit;
+                }
+                foreach ($vaihtoehdot as $vaihtoehto) {
+                    $vaihtoehto = trim((string)$vaihtoehto);
+                    if ($vaihtoehto === '' || preg_match('/\A.{1,300}\z/us', $vaihtoehto) !== 1) {
+                        http_response_code(400);
+                        echo json_encode(['virhe' => 'Jokaisella vastausvaihtoehdolla on oltava teksti (enintään 300 merkkiä).'], JSON_UNESCAPED_UNICODE);
+                        exit;
+                    }
+                }
+                if (!is_int($oikeaIndeksi) || $oikeaIndeksi < 0 || $oikeaIndeksi > 3) {
+                    http_response_code(400);
+                    echo json_encode(['virhe' => 'Valitse jokaiselle kysymykselle oikea vastausvaihtoehto.'], JSON_UNESCAPED_UNICODE);
+                    exit;
+                }
+            }
+
+            $conn->beginTransaction();
+            $packageStmt = $conn->prepare(
                 'INSERT INTO kysymyspaketti (opettaja_id, aihealue_id, nimi, kuvaus, julkaistu)
                  VALUES (?, ?, ?, ?, ?)'
             );
-            $stmt->execute([$opettajaId, $aihealueId, $nimi, $kuvaus !== '' ? $kuvaus : null, $julkaistu]);
+            $packageStmt->execute([$opettajaId, $aihealueId, $nimi, $kuvaus !== '' ? $kuvaus : null, $julkaistu]);
+            $pakettiId = (int)$conn->lastInsertId();
 
+            $questionStmt = $conn->prepare(
+                'INSERT INTO kysymys (paketti_id, teksti, selite, jarjestys)
+                 VALUES (?, ?, ?, ?)'
+            );
+            $optionStmt = $conn->prepare(
+                'INSERT INTO vastausvaihtoehto (kysymys_id, teksti, on_oikea)
+                 VALUES (?, ?, ?)'
+            );
+
+            foreach ($kysymykset as $jarjestys => $kysymys) {
+                $teksti = trim((string)$kysymys['teksti']);
+                $selite = trim((string)($kysymys['selite'] ?? ''));
+                $vaihtoehdot = $kysymys['vaihtoehdot'];
+                $oikeaIndeksi = (int)$kysymys['oikea_indeksi'];
+
+                $questionStmt->execute([
+                    $pakettiId,
+                    $teksti,
+                    $selite !== '' ? $selite : null,
+                    $jarjestys + 1
+                ]);
+                $kysymysId = (int)$conn->lastInsertId();
+
+                foreach ($vaihtoehdot as $vaihtoehtoIndeksi => $vaihtoehto) {
+                    $optionStmt->execute([
+                        $kysymysId,
+                        trim((string)$vaihtoehto),
+                        $vaihtoehtoIndeksi === $oikeaIndeksi ? 1 : 0
+                    ]);
+                }
+            }
+
+            $conn->commit();
             http_response_code(201);
-            echo json_encode(['id' => (int)$conn->lastInsertId()], JSON_UNESCAPED_UNICODE);
+            echo json_encode(['id' => $pakettiId], JSON_UNESCAPED_UNICODE);
             exit;
         }
 
@@ -97,6 +180,33 @@ if (in_array($action, $teacherActions, true)) {
         if ($pakettiId <= 0) {
             http_response_code(400);
             echo json_encode(['virhe' => 'Virheellinen kysymyspaketin tunniste.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        if ($action === 'vaihda_julkisuus') {
+            $julkaistu = (int)($_POST['julkaistu'] ?? -1);
+            if ($julkaistu !== 0 && $julkaistu !== 1) {
+                http_response_code(400);
+                echo json_encode(['virhe' => 'Valitse julkinen tai yksityinen tila.'], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+
+            $stmt = $conn->prepare(
+                'UPDATE kysymyspaketti
+                 SET julkaistu = ?
+                 WHERE id = ? AND opettaja_id = ?'
+            );
+            $stmt->execute([$julkaistu, $pakettiId, $opettajaId]);
+            if ($stmt->rowCount() === 0) {
+                http_response_code(404);
+                echo json_encode(['virhe' => 'Kysymyspakettia ei löydy tai se ei ole sinun.'], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+
+            echo json_encode([
+                'julkaistu' => $julkaistu,
+                'tila' => $julkaistu === 1 ? 'Julkinen' : 'Yksityinen'
+            ], JSON_UNESCAPED_UNICODE);
             exit;
         }
 
@@ -110,6 +220,9 @@ if (in_array($action, $teacherActions, true)) {
 
         echo json_encode(['poistettu' => true], JSON_UNESCAPED_UNICODE);
     } catch (Throwable $e) {
+        if ($conn->inTransaction()) {
+            $conn->rollBack();
+        }
         http_response_code(500);
         error_log($e->getMessage());
         echo json_encode(['virhe' => 'Kysymyspaketin käsittely epäonnistui.'], JSON_UNESCAPED_UNICODE);
@@ -229,7 +342,7 @@ function haeKirjautunutKayttaja(PDO $conn): ?array
     }
 
     $stmt = $conn->prepare(
-        'SELECT Kayttaja_id, Nimi, Rooli FROM kayttaja WHERE Kayttaja_id = ? LIMIT 1'
+        'SELECT id, nimi, rooli FROM kayttaja WHERE id = ? LIMIT 1'
     );
     $stmt->execute([$kayttajaId]);
     $kayttaja = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -240,8 +353,8 @@ function haeKirjautunutKayttaja(PDO $conn): ?array
         return null;
     }
 
-    $_SESSION['nimi'] = $kayttaja['Nimi'];
-    $_SESSION['rooli'] = $kayttaja['Rooli'];
+    $_SESSION['nimi'] = $kayttaja['nimi'];
+    $_SESSION['rooli'] = $kayttaja['rooli'];
     return $kayttaja;
 }
 
