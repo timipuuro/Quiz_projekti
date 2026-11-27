@@ -88,3 +88,9 @@ edistyminen raportoidaan Readme: hin ja kommentteihin. Dayilit kirjataan ylös.
 17.11.26 klo: 12.40 Api yhteys ja hash on tehty.
 
 
+-----------------~Tietokannan päivitys~--------------------------------
+Jos tietokanta on alustettu ennen salasanan hash-saraketta, suorita kerran
+tiedosto migrations/20261125_add_salasana_hash.sql tietokantaan
+Luokka_Tietokanta. Uusissa tietokannoissa sarake tulee Luokka_Tietokanta.sql-tiedostosta.
+
+

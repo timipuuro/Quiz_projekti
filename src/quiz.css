@@ -1,3 +1,13 @@
+   :root {
+    color-scheme: dark;
+    --background:#1d1c1d;
+    --surface: #2d2231;
+    --surface-raised: #31143d;
+    --text: #ffffff;
+    --muted: #9b9ba3;
+    --accent: #7c4594;
+    --border: #ffffff;
+}
 
 *{
     margin: 0;
@@ -12,7 +22,12 @@ html, body{
 
 body{
     font-family: 'Montserrat', serif;
-
+  
+    background: var(--background);
+    background: linear-gradient(110deg, var(--background), #370344);
+    color: var(--text);
+    font-family: "Segoe UI", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
 main{
@@ -24,7 +39,7 @@ main{
     align-items: center;
     background-color: rgb(24, 79, 124);
     background: url('../assets/background_image.jpg');
-    background-color : #1d1c1d;
+    background: linear-gradient(110deg, var(--surface), #370344);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -33,12 +48,55 @@ main{
 .game-quiz-container{
     width: 40rem;
     height: 30rem;
-    background-color: rgb(255, 255, 255);
+    background-color: #2b3035;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 30px;
+}
+
+.package-container{
+    width: min(40rem, 90%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    color: rgb(230, 186, 255);
+}
+
+.package-list{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.package-card{
+    min-height: 10rem;
+    padding: 1.25rem;
+    border: 2px solid darkgray;
+    border-radius: 20px;
+    background-color: #2b3035;
+    color: rgb(167, 176, 196);
+    text-align: left;
+    cursor: pointer;
+}
+
+.package-card h2{
+    margin-bottom: 0.75rem;
+    color: rgb(230, 186, 255);
+}
+
+.package-card p{
+    margin-top: 0.35rem;
+}
+
+.package-card:hover,
+.package-card:focus-visible{
+    border-color: rgb(230, 186, 255);
+    background-color: rgb(102, 0, 150);
 }
 
 .game-details-container{
@@ -51,6 +109,7 @@ main{
 
 .game-details-container h1{
     font-size: 1.2rem;
+    color:rgb(167, 176, 196);
 }
 
 .game-question-container{
@@ -67,6 +126,7 @@ main{
     font-size: 1.1rem;
     text-align: center;
     padding: 3px;
+    color: rgb(167, 176, 196);
 }
 
 .game-options-container{
@@ -94,14 +154,14 @@ span label{
     cursor: pointer;
     transition: transform 0.3s;
     font-weight: 600;
-    color: rgb(22, 22, 22);
+    color: rgb(167, 176, 196);
 }
 
 span label:hover{
     -ms-transform: scale(1.12);
     -webkit-transform: scale(1.12);
     transform: scale(1.12);
-    color: white;
+    color: rgb(230, 186, 255);
 }
 
 input[type="radio"] {
@@ -111,7 +171,7 @@ input[type="radio"] {
 
 
 input[type=radio]:checked ~ .option {
-    background: paleturquoise;
+    background: rgb(102, 0, 150);
 }
 
 .next-button-container{
@@ -121,18 +181,18 @@ input[type=radio]:checked ~ .option {
     justify-content: center;
 }
 .next-button-container button{
-    width: 8rem;
-    height: 2rem;
+    width: 9rem;
+    height: 3rem;
     border-radius: 10px;
     background: none;
-    color: rgb(25, 25, 25);
+    color: rgb(167, 176, 196);
     font-weight: 600;
-    border: 2px solid gray;
+    border: 2px solid rgb(192, 192, 192);
     cursor: pointer;
     outline: none;
 }
 .next-button-container button:hover{
-    background-color: rgb(143, 93, 93);
+    background-color: rgb(102, 0, 150);
 }
 
 .modal-container{
@@ -181,7 +241,7 @@ input[type=radio]:checked ~ .option {
 }
 
 .grade-details p{
-    color: white;
+    color: rgb(110, 118, 138);
     text-align: center;
 }
 
@@ -198,7 +258,7 @@ input[type=radio]:checked ~ .option {
     height: 2rem;
     background: none;
     outline: none;
-    border: 1px solid rgb(252, 242, 241);
+    border: 1px solid rgb(110, 118, 138);
     color: white;
     font-size: 1.1rem;
     cursor: pointer;
@@ -207,8 +267,63 @@ input[type=radio]:checked ~ .option {
 .modal-button-container button:hover{
     background-color: rgb(83, 82, 82);
 }
+.site-header {
+    width: min(600px, calc(100% - 64px));
+    min-height: 88px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+}
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 34px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.nav-link {
+    color: #c5c4c9;
+    transition: color 160ms ease;
+}
+
+.nav-link:hover,
+.text-link:hover {
+    color: var(--accent);
+}
+
+.nav-cta {
+    padding: 11px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: border-color 160ms ease, background 160ms ease;
+}
+
+.nav-cta:hover {
+    border-color: var(--accent);
+    background: #8c46a8;
+}
+
+.nav-cta span,
+.button-primary span {
+    margin-left: 8px;
+}
+
+.nav-user {
+    color: var(--muted);
+}
+a {
+    color: inherit;
+    text-decoration: none;
+}
 
 @media(min-width : 300px) and (max-width : 350px){
+    .package-list{
+        grid-template-columns: 1fr;
+    }
+
     .game-quiz-container{
         width: 90%;
         height: 80vh;
@@ -269,7 +384,63 @@ input[type=radio]:checked ~ .option {
         font-size: 1.2rem;
     }
 }
+@media (max-width: 760px) {
+    .site-header{
+        width: min(100% - 40px, 560px);
+    }
 
+    .site-header {
+        min-height: 72px;
+    }
+
+    .nav {
+        gap: 17px;
+    }
+
+    .nav-link {
+        display: none;
+    }
+
+    .hero {
+        min-height: 0;
+        grid-template-columns: 1fr;
+        gap: 0;
+        padding: 67px 0 42px;
+    }
+
+    .hero h1 {
+        font-size: clamp(60px, 14vw, 82px);
+    }
+
+    .hero-art {
+        min-height: 300px;
+    }
+
+    .section-heading {
+        align-items: start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .topic-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .topic-card {
+        min-height: 155px;
+    }
+
+    .how-to {
+        margin-bottom: 48px;
+        padding: 26px 23px;
+        grid-template-columns: 1fr;
+        gap: 17px;
+    }
+
+    .text-link {
+        justify-self: start;
+    }
+}
 
 
 @keyframes fadeIn {

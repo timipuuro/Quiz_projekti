@@ -12,13 +12,19 @@ if (!empty($_SESSION['kayttaja_id'])) {
 
 $virhe = '';
 $nimi = '';
+$rooli = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nimi = trim((string)($_POST['nimi'] ?? ''));
+    $rooli = (string)($_POST['rooli'] ?? '');
     $salasana = (string)($_POST['salasana'] ?? '');
 
-    if ($nimi === '' || $salasana === '') {
+    if ($nimi === '' || $rooli === '' || $salasana === '') {
         $virhe = 'Täytä kaikki kentät.';
+    } elseif (!in_array($rooli, ['opiskelija', 'opettaja'], true)) {
+        $virhe = 'Valitse kelvollinen rooli.';
+    } elseif (preg_match('/\A.{1,100}\z/us', $nimi) !== 1) {
+        $virhe = 'Nimen enimmäispituus on 100 merkkiä.';
     } elseif (strlen($salasana) < 8) {
         $virhe = 'Salasanan tulee olla vähintään 8 merkkiä.';
     } else {
@@ -34,14 +40,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
             $stmt->execute([
                 $nimi,
-                'opiskelija',
+                $rooli,
                 password_hash($salasana, PASSWORD_DEFAULT)
             ]);
 
             session_regenerate_id(true);
             $_SESSION['kayttaja_id'] = (int)$conn->lastInsertId();
             $_SESSION['nimi'] = $nimi;
-            $_SESSION['rooli'] = 'opiskelija';
+            $_SESSION['rooli'] = $rooli;
             header('Location: index.php');
             exit;
         }
@@ -66,8 +72,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
             <form method="post" class="auth-form">
                 <label for="nimi">Nimi</label>
-                <input id="nimi" name="nimi" autocomplete="name" required maxlength="100"
+                <input id="nimi" name="nimi" autocomplete="username" required maxlength="100"
                        value="<?= htmlspecialchars($nimi) ?>">
+                <label for="rooli">Rooli</label>
+                <select id="rooli" name="rooli" required>
+                    <option value="" disabled <?= $rooli === '' ? 'selected' : '' ?>>Valitse rooli</option>
+                    <option value="opiskelija" <?= $rooli === 'opiskelija' ? 'selected' : '' ?>>Opiskelija</option>
+                    <option value="opettaja" <?= $rooli === 'opettaja' ? 'selected' : '' ?>>Opettaja</option>
+                </select>
                 <label for="salasana">Salasana</label>
                 <input id="salasana" name="salasana" type="password" autocomplete="new-password" required minlength="8">
                 <button class="button button-primary" type="submit">Luo tunnus</button>

@@ -51,7 +51,6 @@ CREATE TABLE `kayttaja` (
   `id` int NOT NULL,
   `nimi` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `rooli` enum('opettaja','opiskelija') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `sahkoposti` varchar(190) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `salasana_hash` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -59,18 +58,18 @@ CREATE TABLE `kayttaja` (
 -- Vedos taulusta `kayttaja`
 --
 
-INSERT INTO `kayttaja` (`id`, `nimi`, `rooli`, `sahkoposti`, `salasana_hash`) VALUES
-(1, 'Matti Opettaja', 'opettaja', 'matti@example.fi', NULL),
-(2, 'Anna Opettaja', 'opettaja', 'anna@example.fi', NULL),
-(3, 'Pekka Opettaja', 'opettaja', 'pekka@example.fi', NULL),
-(4, 'Mikko Virtanen', 'opiskelija', 'mikko@example.fi', NULL),
-(5, 'Liisa Korhonen', 'opiskelija', 'liisa@example.fi', NULL),
-(6, 'Ville Nieminen', 'opiskelija', 'ville@example.fi', NULL),
-(7, 'Emma Laine', 'opiskelija', 'emma@example.fi', NULL),
-(8, 'Oskari Heikkinen', 'opiskelija', 'oskari@example.fi', NULL),
-(9, 'Sofia Mäkelä', 'opiskelija', 'sofia@example.fi', NULL),
-(10, 'Elias Hämäläinen', 'opiskelija', 'elias@example.fi', NULL),
-(11, 'Aino Lehtinen', 'opiskelija', 'aino@example.fi', NULL);
+INSERT INTO `kayttaja` (`id`, `nimi`, `rooli`, `salasana_hash`) VALUES
+(1, 'Matti Opettaja', 'opettaja', NULL),
+(2, 'Anna Opettaja', 'opettaja', NULL),
+(3, 'Pekka Opettaja', 'opettaja', NULL),
+(4, 'Mikko Virtanen', 'opiskelija', NULL),
+(5, 'Liisa Korhonen', 'opiskelija', NULL),
+(6, 'Ville Nieminen', 'opiskelija', NULL),
+(7, 'Emma Laine', 'opiskelija', NULL),
+(8, 'Oskari Heikkinen', 'opiskelija', NULL),
+(9, 'Sofia Mäkelä', 'opiskelija', NULL),
+(10, 'Elias Hämäläinen', 'opiskelija', NULL),
+(11, 'Aino Lehtinen', 'opiskelija', NULL);
 
 -- --------------------------------------------------------
 
@@ -289,7 +288,7 @@ ALTER TABLE `aihealue`
 --
 ALTER TABLE `kayttaja`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uq_kayttaja_sahkoposti` (`sahkoposti`);
+  ADD UNIQUE KEY `uq_kayttaja_nimi` (`nimi`);
 
 --
 -- Indeksit taulukolle `kysymys`

@@ -14,9 +14,12 @@ require_once "tietokanta.php";
         content="width=device-width, initial-scale=1.0"
     >
     <link rel="stylesheet" href="quiz.css">
+    
 </head>
 <body>
+    
     <main>
+        <?php include "header1.php"; ?>
         <!-- creating a modal for when quiz ends -->
         <div class="modal-container" id="score-modal">
 

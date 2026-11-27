@@ -4,7 +4,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 ?>
 <header class="site-header">
-    <a class="brand" href="index.php"><span class="brand-mark">?</span> Kysymyspaketteja</a>
+    <a class="brand" href="index.php"> Kysymyspaketteja</a>
     <nav class="nav" aria-label="Päänavigaatio">
         <a class="nav-link" href="index.php">Etusivu</a>
         <?php if (!empty($_SESSION['kayttaja_id'])): ?>

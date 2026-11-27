@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $salasana = (string)($_POST['salasana'] ?? '');
 
     if ($nimi === '' || $salasana === '') {
-        $virhe = 'Täytä nimi ja salasana';
+        $virhe = 'Täytä nimi ja salasana.';
     } else {
         $stmt = $conn->prepare(
             'SELECT id, nimi, rooli, salasana_hash
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $kayttaja = $stmt->fetch();
 
         if (!$kayttaja || !password_verify($salasana, (string)$kayttaja['salasana_hash'])) {
-            $virhe = 'Nimi tai salasana on väärin';
+            $virhe = 'Nimi tai salasana on väärin.';
         } else {
             session_regenerate_id(true);
             $_SESSION['kayttaja_id'] = (int)$kayttaja['id'];
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
             <form method="post" class="auth-form">
                 <label for="nimi">Nimi</label>
-                <input id="nimi" name="nimi" autocomplete="username" required
+                <input id="nimi" name="nimi" autocomplete="username" required maxlength="100"
                        value="<?= htmlspecialchars($nimi ?? '') ?>">
                 <label for="salasana">Salasana</label>
                 <input id="salasana" name="salasana" type="password" autocomplete="current-password" required>
