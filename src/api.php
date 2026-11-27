@@ -358,21 +358,144 @@ function haeKirjautunutKayttaja(PDO $conn): ?array
     return $kayttaja;
 }
 
-function haeOpettajaId(PDO $conn): ?int
+function jsonVastaus(array $data, int $status = 200): void
 {
-    $kayttajaId = (int)($_SESSION['kayttaja_id'] ?? 0);
-    if ($kayttajaId <= 0) {
-        return null;
-    }
-
-    $stmt = $conn->prepare('SELECT rooli FROM kayttaja WHERE id = ? LIMIT 1');
-    $stmt->execute([$kayttajaId]);
-    $kayttaja = $stmt->fetch();
-
-    if (!$kayttaja || $kayttaja['rooli'] !== 'opettaja') {
-        return null;
-    }
-
-    $_SESSION['rooli'] = $kayttaja['rooli'];
-    return $kayttajaId;
+    http_response_code($status);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($data, JSON_UNESCAPED_UNICODE);
+    exit;
 }
+
+function vaadiOpettaja(PDO $conn): array
+{
+    $kayttaja = haeKirjautunutKayttaja($conn);
+    if (!$kayttaja || ($kayttaja['rooli'] ?? '') !== 'opettaja') {
+        jsonVastaus(['virhe' => 'Toiminto vaatii opettajan kirjautumisen.'], 403);
+    }
+    return $kayttaja;
+}
+
+function csrfToken(): string
+{
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+function vaadiCsrf(): void
+{
+    $token = (string)($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
+    if ($token === '' || !hash_equals((string)($_SESSION['csrf_token'] ?? ''), $token)) {
+        jsonVastaus(['virhe' => 'Istunto on vanhentunut. Päivitä sivu.'], 403);
+    }
+}
+
+$action = (string)($_GET['action'] ?? '');
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === 'omat_paketit') {
+    $kayttaja = vaadiOpettaja($conn);
+
+    try {
+        $stmt = $conn->prepare(
+            'SELECT kp.id, kp.nimi, kp.kuvaus, kp.julkaistu,
+                    a.nimi AS aihealue,
+                    COUNT(k.id) AS kysymys_maara
+             FROM kysymyspaketti kp
+             LEFT JOIN aihealue a ON a.id = kp.aihealue_id
+             LEFT JOIN kysymys k ON k.paketti_id = kp.id
+             WHERE kp.opettaja_id = ?
+             GROUP BY kp.id, kp.nimi, kp.kuvaus, kp.julkaistu, a.nimi
+             ORDER BY kp.luotu DESC'
+        );
+        $stmt->execute([(int)$kayttaja['id']]);
+        $packages = $stmt->fetchAll();
+
+        $aihealueet = $conn->query(
+            'SELECT id, nimi FROM aihealue ORDER BY nimi'
+        )->fetchAll();
+
+        jsonVastaus([
+            'packages' => $packages,
+            'aihealueet' => $aihealueet,
+            'csrf_token' => csrfToken()
+        ]);
+    } catch (Throwable $e) {
+        error_log($e->getMessage());
+        jsonVastaus(['virhe' => 'Paketteja ei voitu hakea.'], 500);
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'luo_paketti') {
+    vaadiCsrf();
+    $kayttaja = vaadiOpettaja($conn);
+
+    $nimi = trim((string)($_POST['nimi'] ?? ''));
+    $kuvaus = trim((string)($_POST['kuvaus'] ?? ''));
+    $aihealueId = ($_POST['aihealue_id'] ?? '') !== ''
+        ? (int)$_POST['aihealue_id']
+        : null;
+    $julkaistu = isset($_POST['julkaistu']) ? 1 : 0;
+
+    if ($nimi === '') {
+        jsonVastaus(['virhe' => 'Paketin nimi on pakollinen.'], 422);
+    }
+
+    if ($aihealueId !== null) {
+        $stmt = $conn->prepare('SELECT id FROM aihealue WHERE id = ?');
+        $stmt->execute([$aihealueId]);
+        if (!$stmt->fetch()) {
+            jsonVastaus(['virhe' => 'Virheellinen aihealue.'], 422);
+        }
+    }
+
+    try {
+        $stmt = $conn->prepare(
+            'INSERT INTO kysymyspaketti
+             (opettaja_id, aihealue_id, nimi, kuvaus, julkaistu)
+             VALUES (?, ?, ?, ?, ?)'
+        );
+        $stmt->execute([
+            (int)$kayttaja['id'],
+            $aihealueId,
+            $nimi,
+            $kuvaus,
+            $julkaistu
+        ]);
+        jsonVastaus([
+            'viesti' => 'Kysymyspaketti luotiin.',
+            'id' => (int)$conn->lastInsertId()
+        ], 201);
+    } catch (Throwable $e) {
+        error_log($e->getMessage());
+        jsonVastaus(['virhe' => 'Pakettia ei voitu luoda.'], 500);
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'poista_paketti') {
+    vaadiCsrf();
+    $kayttaja = vaadiOpettaja($conn);
+    $pakettiId = (int)($_POST['paketti_id'] ?? 0);
+
+    if ($pakettiId <= 0) {
+        jsonVastaus(['virhe' => 'Virheellinen pakettitunnus.'], 422);
+    }
+
+    try {
+        $stmt = $conn->prepare(
+            'DELETE FROM kysymyspaketti
+             WHERE id = ? AND opettaja_id = ?'
+        );
+        $stmt->execute([$pakettiId, (int)$kayttaja['id']]);
+
+        if ($stmt->rowCount() === 0) {
+            jsonVastaus(['virhe' => 'Pakettia ei löytynyt tai sinulla ei ole oikeutta poistaa sitä.'], 404);
+        }
+        jsonVastaus(['viesti' => 'Kysymyspaketti poistettiin.']);
+    } catch (Throwable $e) {
+        error_log($e->getMessage());
+        jsonVastaus(['virhe' => 'Pakettia ei voitu poistaa.'], 500);
+    }
+}
+
+jsonVastaus(['virhe' => 'Tuntematon toiminto.'], 404);
