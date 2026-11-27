@@ -556,6 +556,72 @@ h3 {
     justify-self: start;
 }
 
+.question-editor {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 12px;
+}
+
+.question-editor-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.question-editor-heading h3 {
+    margin: 0;
+}
+
+#question-list {
+    display: grid;
+    gap: 12px;
+}
+
+.question-card {
+    position: relative;
+    display: grid;
+    gap: 12px;
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.question-card legend {
+    padding: 0 6px;
+    color: var(--text);
+    font-weight: 700;
+}
+
+.question-card label {
+    min-width: 0;
+}
+
+.remove-question {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.answer-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.answer-input {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+}
+
+.answer-input input[type="radio"] {
+    width: 18px;
+    height: 18px;
+}
+
 .teacher-panel-message {
     min-height: 1.5em;
     margin: 18px 0 8px;
@@ -589,6 +655,13 @@ h3 {
 
 .teacher-package .button {
     min-height: 38px;
+}
+
+.teacher-package-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
 }
 
 .topic-arrow {
@@ -713,6 +786,10 @@ a:focus-visible {
 
     .package-form,
     .teacher-package-list {
+        grid-template-columns: 1fr;
+    }
+
+    .answer-grid {
         grid-template-columns: 1fr;
     }
 
