@@ -1,4 +1,25 @@
-<section class="teacher-panel section-wrap" aria-labelledby="teacher-panel-title">
+<?php
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+if (($_SESSION['rooli'] ?? '') !== 'opettaja') {
+    header('Location: kirjaudu.php');
+    exit;
+}
+?>
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ohjauspaneeli</title>
+    <link rel="stylesheet" href="tyyli.css">
+</head>
+<body>
+    <?php include "header.php"; ?>
+    <main>
+        <section class="teacher-panel section-wrap" aria-labelledby="teacher-panel-title">
     <div class="section-heading">
         <div>
             <p class="eyebrow">OPETTAJALLE</p>
@@ -33,7 +54,8 @@
     <div class="teacher-package-list" id="teacher-package-list">
         <p>Haetaan omia kysymyspaketteja...</p>
     </div>
-</section>
+        </section>
+    </main>
 
 <script>
     (() => {
@@ -151,8 +173,9 @@
         });
 
         loadPackages();
+    
     })();
-    UPDATE kayttaja
-SET salasana_hash = 'salasana'
-WHERE nimi = 'opettaja';
+    
 </script>
+</body>
+</html>
